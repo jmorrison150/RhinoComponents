@@ -57,6 +57,7 @@
     <Compile Include="planarSrf.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="random.cs" />
+    <Compile Include="subdivideSurface.cs" />
     <Compile Include="sweepTaper.cs" />
     <Compile Include="truss.cs" />
   </ItemGroup>
