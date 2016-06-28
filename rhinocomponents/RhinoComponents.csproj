@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="curtainWall.cs" />
     <Compile Include="headHeight.cs" />
     <Compile Include="glazing_extrudeZ.cs" />
     <Compile Include="hotel_rotate.cs" />
@@ -63,6 +64,8 @@
     <Compile Include="sweepTaper.cs" />
     <Compile Include="truss.cs" />
     <Compile Include="truss06.cs" />
+    <Compile Include="waffle.cs" />
+
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
