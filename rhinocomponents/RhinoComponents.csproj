@@ -54,12 +54,15 @@
     <Compile Include="headHeight.cs" />
     <Compile Include="glazing_extrudeZ.cs" />
     <Compile Include="hotel_rotate.cs" />
+    <Compile Include="moveFace.cs" />
     <Compile Include="planarSrf.cs" />
+    <Compile Include="planeOffset.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="random.cs" />
     <Compile Include="subdivideSurface.cs" />
     <Compile Include="sweepTaper.cs" />
     <Compile Include="truss.cs" />
+    <Compile Include="truss06.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

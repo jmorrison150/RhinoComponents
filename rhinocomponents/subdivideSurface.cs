@@ -94,21 +94,24 @@ public class Script_Instance : GH_ScriptInstance {
     for (int i = 1; i < parameters.Length; i++) {
       Curve c = surface.IsoCurve(toggleU, parameters[i]);
       updateCurves.Add(c);
-      double panelLength = 0;
-      while (panelLength < c.GetLength()) {
-        double panelParam;
-        c.LengthParameter(panelLength, out panelParam);
-        Point2d[] points = new Point2d[2];
-        points[0] = new Point2d(panelParam, parameters[i]);
-        points[1] = new Point2d(panelParam, parameters[i - 1]);
-        if (uvToggle) {
-          points[0] = new Point2d(parameters[i], panelParam);
-          points[1] = new Point2d(parameters[i - 1], panelParam);
-        }
-        Curve cc = surface.InterpolatedCurveOnSurfaceUV(points, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-        updateCurves.Add(cc);
 
-        panelLength += panelMin + (rnd.NextDouble() * length);
+      if (length > 0) {
+        double panelLength = 0;
+        while (panelLength < c.GetLength()) {
+          double panelParam;
+          c.LengthParameter(panelLength, out panelParam);
+          Point2d[] points = new Point2d[2];
+          points[0] = new Point2d(panelParam, parameters[i]);
+          points[1] = new Point2d(panelParam, parameters[i - 1]);
+          if (uvToggle) {
+            points[0] = new Point2d(parameters[i], panelParam);
+            points[1] = new Point2d(parameters[i - 1], panelParam);
+          }
+          Curve cc = surface.InterpolatedCurveOnSurfaceUV(points, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
+          updateCurves.Add(cc);
+
+          panelLength += panelMin + (rnd.NextDouble() * length);
+        }
       }
 
     }
