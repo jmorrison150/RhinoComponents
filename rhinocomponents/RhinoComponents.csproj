@@ -55,6 +55,7 @@
     <Compile Include="headHeight.cs" />
     <Compile Include="glazing_extrudeZ.cs" />
     <Compile Include="hotel_rotate.cs" />
+    <Compile Include="move.cs" />
     <Compile Include="moveFace.cs" />
     <Compile Include="percent.cs" />
     <Compile Include="planarSrf.cs" />
@@ -65,6 +66,7 @@
     <Compile Include="sweepTaper.cs" />
     <Compile Include="truss.cs" />
     <Compile Include="truss06.cs" />
+    <Compile Include="trussBridge.cs" />
     <Compile Include="waffle.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
