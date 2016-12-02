@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4DA77CD9-6CC4-4CE9-89AC-542980A6804D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>gsd</RootNamespace>
+    <AssemblyName>gsd</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>3</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="GH_IO">
+      <HintPath>..\..\..\..\..\..\Program Files\Common Files\McNeel\Rhinoceros\5.0\Plug-ins\Grasshopper (b45a29b1-4343-4035-989e-044e8580d9cf)\0.9.75.0\GH_IO.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="GH_Util">
+      <HintPath>..\..\..\..\..\..\Program Files\Common Files\McNeel\Rhinoceros\5.0\Plug-ins\Grasshopper (b45a29b1-4343-4035-989e-044e8580d9cf)\0.9.75.0\GH_Util.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Grasshopper">
+      <HintPath>..\..\..\..\..\..\Program Files\Common Files\McNeel\Rhinoceros\5.0\Plug-ins\Grasshopper (b45a29b1-4343-4035-989e-044e8580d9cf)\0.9.75.0\Grasshopper.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RhinoCommon">
+      <HintPath>..\..\..\..\..\Program Files\Rhinoceros 5 (64-bit)\System\RhinoCommon.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="attractor.cs" />
+    <Compile Include="bakeCount.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="bakery.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="canvas.cs" />
+    <Compile Include="Class3.cs" />
+    <Compile Include="cone5Points.cs" />
+    <Compile Include="DevelopablePrincipleNormal.cs" />
+    <Compile Include="equateTM.cs" />
+    <Compile Include="equation.cs" />
+    <Compile Include="export.cs" />
+    <Compile Include="geodesic2.cs" />
+    <Compile Include="group.cs" />
+    <Compile Include="layerBake.cs" />
+    <Compile Include="paste.cs" />
+    <Compile Include="offset.cs" />
+    <Compile Include="range.cs" />
+    <Compile Include="Resources\map.cs" />
+    <Compile Include="Resources\meshColor.cs" />
+    <Compile Include="Slider.cs" />
+    <Compile Include="SurfTM_offset.cs" />
+    <Compile Include="skip.cs" />
+    <Compile Include="SurfTM.cs" />
+    <Compile Include="DevelopableBinormal.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="DevelopableTangent.cs" />
+    <Compile Include="thickness.cs" />
+    <Compile Include="unroll.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Icon1.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\machtssrgm.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\surfTM_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tanDev.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="canvas_order_of_events.txt" />
+    <Content Include="Resources\gsd.jpg" />
+    <Content Include="Resources\gsd02.jpg" />
+    <Content Include="Resources\gsd03 copy.jpg" />
+    <Content Include="Resources\gsd03.jpg" />
+    <Content Include="Resources\gsd04.jpg" />
+    <Content Include="Resources\gsd05.jpg" />
+    <Content Include="Resources\gsd06.jpg" />
+    <Content Include="Resources\gsd07.jpg" />
+    <Content Include="Resources\gsd08.jpg" />
+    <Content Include="Resources\gsd09.jpg" />
+    <Content Include="Resources\binormal_icon.png" />
+    <None Include="Resources\gsd11.png" />
+    <None Include="Resources\gsd12.png" />
+    <None Include="Resources\gsd13.png" />
+    <Content Include="Resources\norm_icon.png" />
+    <None Include="Resources\piTm.png" />
+    <Content Include="Resources\tan_icon.png" />
+    <Content Include="Resources\surfTM_offset1.png" />
+    <Content Include="Resources\surfTM_offset2.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>rename "$(Targetpath)" "GSD.gha"</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

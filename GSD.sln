@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2013 for Windows Desktop
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D7AF041A-FFC9-4236-A687-8CE5D9C311AC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "geometry_lab", "geometry_lab\geometry_lab.csproj", "{F885E4C3-15A3-4689-9BFA-3E57E51DA8A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "surfTM", "surfTM\surfTM.csproj", "{4DA77CD9-6CC4-4CE9-89AC-542980A6804D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "apts", "apts\apts.csproj", "{AE5893AA-E3CA-4904-B4DD-6FE7445CC597}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F885E4C3-15A3-4689-9BFA-3E57E51DA8A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F885E4C3-15A3-4689-9BFA-3E57E51DA8A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F885E4C3-15A3-4689-9BFA-3E57E51DA8A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F885E4C3-15A3-4689-9BFA-3E57E51DA8A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DA77CD9-6CC4-4CE9-89AC-542980A6804D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DA77CD9-6CC4-4CE9-89AC-542980A6804D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DA77CD9-6CC4-4CE9-89AC-542980A6804D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DA77CD9-6CC4-4CE9-89AC-542980A6804D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE5893AA-E3CA-4904-B4DD-6FE7445CC597}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE5893AA-E3CA-4904-B4DD-6FE7445CC597}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE5893AA-E3CA-4904-B4DD-6FE7445CC597}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE5893AA-E3CA-4904-B4DD-6FE7445CC597}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F885E4C3-15A3-4689-9BFA-3E57E51DA8A2} = {D7AF041A-FFC9-4236-A687-8CE5D9C311AC}
+		{4DA77CD9-6CC4-4CE9-89AC-542980A6804D} = {D7AF041A-FFC9-4236-A687-8CE5D9C311AC}
+	EndGlobalSection
+EndGlobal

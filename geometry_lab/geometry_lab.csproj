@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F885E4C3-15A3-4689-9BFA-3E57E51DA8A2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>geometry_lab</RootNamespace>
+    <AssemblyName>geometry_lab</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="GH_IO">
+      <HintPath>..\..\..\..\..\..\Program Files\Common Files\McNeel\Rhinoceros\5.0\Plug-ins\Grasshopper (b45a29b1-4343-4035-989e-044e8580d9cf)\0.9.75.0\GH_IO.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="GH_Util">
+      <HintPath>..\..\..\..\..\..\Program Files\Common Files\McNeel\Rhinoceros\5.0\Plug-ins\Grasshopper (b45a29b1-4343-4035-989e-044e8580d9cf)\0.9.75.0\GH_Util.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Grasshopper">
+      <HintPath>..\..\..\..\..\..\Program Files\Common Files\McNeel\Rhinoceros\5.0\Plug-ins\Grasshopper (b45a29b1-4343-4035-989e-044e8580d9cf)\0.9.75.0\Grasshopper.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RhinoCommon">
+      <HintPath>..\..\..\..\..\Program Files\Rhinoceros 5 (64-bit)\System\RhinoCommon.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="bottomNotch.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Class1.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Class10.cs" />
+    <Compile Include="Class11.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Class12.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Class13.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Class2.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Class3.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Class4.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Class5.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Class6.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Class7.cs" />
+    <Compile Include="Class9.cs" />
+    <Compile Include="copy.move.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="extrude.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="flip.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="flip_loft.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="forcedPerspective.cs" />
+    <Compile Include="intersect.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="label.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="label_indices.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="makeXY_pillow.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="middle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="midPoints.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="move.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="pick_ij.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="planarUnroll.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ptsToMesh.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="putOnGround.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="rectangle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="rectangle_line.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="rotation_angle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="sinCurve.cs" />
+    <Compile Include="sinOnSurface.cs" />
+    <Compile Include="split_j.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="split_points.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="to3d.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="to3d_nonPlanar.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="topNotch.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="toXY_points.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\square.jpg" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

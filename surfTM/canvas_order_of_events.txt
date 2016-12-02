@@ -1,0 +1,19 @@
+﻿
+    CanvasPaintBegin
+    CanvasPaintBackground
+
+    CanvasPrePaintGroups
+    CanvasPostPaintGroups
+
+    CanvasPrePaintWires
+    CanvasPostPaintWires
+    
+	CanvasPrePaintObjects
+    CanvasPostPaintObjects
+    
+	CanvasPrePaintOverlay
+    CanvasPostPaintOverlay
+    
+	CanvasPrePaintWidgets
+    CanvasPostPaintWidgets
+    CanvasPaintEnd
