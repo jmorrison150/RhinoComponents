@@ -28,7 +28,8 @@ using System.Runtime.InteropServices;
 /// <summary>
 /// This class will be instantiated on demand by the Script component.
 /// </summary>
-public class Script_Instance : GH_ScriptInstance {
+public class Script_Instance : GH_ScriptInstance 
+  {
   #region Utility functions
   /// <summary>Print a String to the [Out] Parameter of the Script component.</summary>
   /// <param name="text">String to print.</param>
@@ -64,7 +65,8 @@ public class Script_Instance : GH_ScriptInstance {
   /// Output parameters as ref arguments. You don't have to assign output parameters,
   /// they will have a default value.
   /// </summary>
-  private void RunScript(Brep brep, double baySpacing, double trussWidth, List<double> trussTriangles, double rotate, double scaleXY, double spanRatio, ref object A, ref object B, ref object C, ref object D) {
+  private void RunScript(Brep brep, double baySpacing, double trussWidth, List<double> trussTriangles, double rotate, double scaleXY, double spanRatio, ref object A, ref object B, ref object C, ref object D) 
+    {
 
 
 

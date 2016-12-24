@@ -52,6 +52,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="connectLines.cs" />
+    <Compile Include="contourGradient.cs" />
+    <Compile Include="dup.cs" />
     <Compile Include="headHeight.cs" />
     <Compile Include="glazing_extrudeZ.cs" />
     <Compile Include="hotel_rotate.cs" />
@@ -64,6 +66,7 @@
     <Compile Include="sidewalk.cs" />
     <Compile Include="subdivideSurface.cs" />
     <Compile Include="sweepTaper.cs" />
+    <Compile Include="tree.cs" />
     <Compile Include="trimCurve.cs" />
     <Compile Include="truss.cs" />
     <Compile Include="trussBridge.cs" />
