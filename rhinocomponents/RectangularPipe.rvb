@@ -1,0 +1,220 @@
+'Script written and copyrighted by Gelfling '04 aka David Rutten
+'December 7th 2004 revision
+Option Explicit
+
+Sub RectangularPipe()
+	Dim selCurves
+	Dim Width, Height, Thickness
+	Dim dblAngle, blnThick, blnCap
+	Dim strResult, arrOptions(7)
+	Dim idPreview, i
+
+	selCurves = Rhino.GetObjects("Select curves to pipe...", 4, vbFalse, vbTrue, vbTrue)
+	If IsNull(selCurves) Then Exit Sub
+
+	Width = Rhino.GetSettings(Rhino.InstallFolder & "Gelfling.ini", "RectangularPipe", "Width")
+    If IsNull(Width) Then Width = 2 Else Width = CDbl(Width)
+    Height = Rhino.GetSettings(Rhino.InstallFolder & "Gelfling.ini", "RectangularPipe", "Height")
+    If IsNull(Height) Then Height = 2 Else Height = CDbl(Height)
+    Thickness = Rhino.GetSettings(Rhino.InstallFolder & "Gelfling.ini", "RectangularPipe", "Thickness")
+    If IsNull(Thickness) Then Thickness = 0.25 Else Thickness = CDbl(Thickness)
+    dblAngle = Rhino.GetSettings(Rhino.InstallFolder & "Gelfling.ini", "RectangularPipe", "Angle")
+    If IsNull(dblAngle) Then dblAngle = 0 Else dblAngle = CDbl(dblAngle)
+    blnThick = Rhino.GetSettings(Rhino.InstallFolder & "Gelfling.ini", "RectangularPipe", "Thick")
+    If IsNull(blnThick) Then blnThick = vbFalse Else blnThick = CBool(blnThick)
+    blnCap = Rhino.GetSettings(Rhino.InstallFolder & "Gelfling.ini", "RectangularPipe", "Cap")
+    If IsNull(blnCap) Then blnCap = vbTrue Else blnCap = CBool(blnCap)
+
+	idPreview = Array("Nothing")
+	Do
+		Rhino.EnableRedraw vbFalse
+		Rhino.DeleteObjects idPreview
+		idPreview = DrawPreview(selCurves, Array(Width, Width+Thickness), Array(Height, Height+Thickness), dblAngle, blnThick)
+		If IsNull(idPreview) Then idPreview = Array("Nothing")
+		Rhino.EnableRedraw vbTrue
+
+		arrOptions(0) = "Width"
+		arrOptions(1) = "Height"
+		arrOptions(2) = "Angle"
+		arrOptions(3) = "Cap_No"
+		arrOptions(4) = "Shell_No"
+		arrOptions(5) = "Thickness"
+		arrOptions(6) = "Accept"
+		arrOptions(7) = "Quit"
+		If blnThick Then arrOptions(4) = "Shell_Yes"
+		If blnCap Then arrOptions(3) = "Cap_Yes"
+
+		strResult = Rhino.GetString("Rectangular pipe", "Accept", arrOptions)
+		If IsNull(strResult) Then strResult = "Quit"
+		If IsNumeric(strResult) Then
+			dblAngle = CDbl(strResult)
+		Else
+			Select Case UCase(Left(strResult, 2))
+			Case "WI"
+				strResult = Rhino.GetReal("Specify a new pipe width", Width, Rhino.UnitAbsoluteTolerance)
+				If Not IsNull(strResult) Then Width = strResult
+			Case "HE"
+				strResult = Rhino.GetReal("Specify a new pipe height", Height, Rhino.UnitAbsoluteTolerance)
+				If Not IsNull(strResult) Then Height = strResult
+			Case "AN"
+	            strResult = Rhino.GetAngle (,,dblAngle, "Specify a new pipe angle")
+				If Not IsNull(strResult) Then dblAngle = strResult
+			Case "CA"
+			    blnCap = Not blnCap
+			Case "SH"
+				blnThick = Not blnThick		
+			Case "TH"
+				strResult = Rhino.GetReal("Specify a new shelling offset (negative values offset towards the inside of the pipe)", Thickness)
+				If Not IsNull(strResult) Then Thickness = strResult
+			Case "AC"
+				Rhino.EnableRedraw vbFalse
+				Rhino.DeleteObjects idPreview
+				Exit Do
+			Case "QU"
+			    Rhino.EnableRedraw vbFalse
+				Rhino.DeleteObjects idPreview
+				Rhino.EnableRedraw vbTrue
+				Exit Sub
+			End Select
+		End If
+	Loop
+
+    Rhino.SaveSettings Rhino.InstallFolder & "Gelfling.ini", "RectangularPipe", "Width", CStr(Width)
+    Rhino.SaveSettings Rhino.InstallFolder & "Gelfling.ini", "RectangularPipe", "Height", CStr(Height)
+    Rhino.SaveSettings Rhino.InstallFolder & "Gelfling.ini", "RectangularPipe", "Thickness", CStr(Thickness)
+    Rhino.SaveSettings Rhino.InstallFolder & "Gelfling.ini", "RectangularPipe", "Angle", CStr(dblAngle)
+    Rhino.SaveSettings Rhino.InstallFolder & "Gelfling.ini", "RectangularPipe", "Thick", CStr(blnThick)
+    Rhino.SaveSettings Rhino.InstallFolder & "Gelfling.ini", "RectangularPipe", "Thick", CStr(blnCap)
+
+	For i = 0 To UBound(selCurves)
+		RecPipeCurve selCurves(i), Array(Width, Width-Thickness), Array(Height, Height-Thickness), dblAngle, blnThick
+	Next
+	Rhino.UnselectAllObjects
+	Rhino.SelectObjects selCurves
+	Rhino.EnableRedraw vbTrue
+End Sub
+RectangularPipe
+
+Function DrawPreview(idCurves, Width, Height, dblAngle, blnThick)
+	DrawPreview = Null
+	Dim profile, i
+	Dim allP(), p
+	
+	p = 0
+	For i = 0 To UBound(idCurves)
+		profile = AddRectangularSection(idCurves(i), Width(0), Height(0), dblAngle, 0)
+		If Not IsNull(profile) Then
+			Rhino.ObjectColor profile, 0
+			ReDim Preserve arrP(p)
+			arrP(p) = profile
+			p = p+1
+		End If
+	    If Not Rhino.IsCurveClosed(idCurves(i)) Then
+			profile = AddRectangularSection(idCurves(i), Width(0), Height(0), dblAngle, 1)
+			If Not IsNull(profile) Then
+				Rhino.ObjectColor profile, 0
+				ReDim Preserve arrP(p)
+				arrP(p) = profile
+				p = p+1
+			End If	    
+	    End If
+	    
+	    If blnThick Then
+			profile = AddRectangularSection(idCurves(i), Width(1), Height(1), dblAngle, 0)
+			If Not IsNull(profile) Then
+				Rhino.ObjectColor profile, vbWhite
+				ReDim Preserve arrP(p)
+				arrP(p) = profile
+				p = p+1
+			End If
+		    If Not Rhino.IsCurveClosed(idCurves(i)) Then
+				profile = AddRectangularSection(idCurves(i), Width(1), Height(1), dblAngle, 1)
+				If Not IsNull(profile) Then
+					Rhino.ObjectColor profile, vbWhite
+					ReDim Preserve arrP(p)
+					arrP(p) = profile
+					p = p+1
+				End If	    
+		    End If
+	    End If
+	Next
+	If p = 0 Then Exit Function
+	DrawPreview = arrP
+End Function
+
+Function RecPipeCurve(idCurve, Width, Height, dblAngle, blnThick)
+	RecPipeCurve = Null
+	Dim profile1, profile2
+	Dim strOptions
+	Dim outerPipe, innerPipe, cap
+
+	profile1 = AddRectangularSection(idCurve, Width(0), Height(0), dblAngle, 0)
+	If IsNull(profile1) Then Exit Function
+	
+	If Rhino.IsCurveClosed(idCurve) Then
+		strOptions = "_Style=Freeform _Simplify=None _RefitTolerance=0.01 _RebuildCount=10 _Closed=Yes _ShapeBlending=Global _Enter"
+	Else
+		strOptions = "_Style=Freeform _Simplify=None _RefitTolerance=0.01 _RebuildCount=10 _Closed=No _ShapeBlending=Global _Enter"
+	End If
+	Rhino.UnselectAllObjects
+	Rhino.SelectObject idCurve
+	Rhino.Command "-_Sweep1 _SelID " & profile1 & " _Enter " & strOptions, vbFalse
+	If Rhino.LastCommandResult <> 0 Then Exit Function
+	outerPipe = Rhino.FirstObject
+	If Not blnThick Then
+		Rhino.DeleteObject profile1
+		Rhino.UnselectAllObjects
+		Rhino.SelectObject outerPipe
+		Rhino.Command "-_Cap", vbFalse
+        outerPipe = Rhino.FirstObject
+        RecPipeCurve = Array(outerPipe)
+        Exit Function
+	End If
+
+    profile2 = AddRectangularSection(idCurve, Width(1), Height(1), dblAngle, 0)
+	If IsNull(profile2) Then
+		Rhino.DeleteObjects Array(profile1, outerPipe)
+		Exit Function
+	End If
+	Rhino.UnselectAllObjects
+	Rhino.SelectObject idCurve
+	Rhino.Command "-_Sweep1 _SelID " & profile2 & " _Enter " & strOptions, vbFalse
+	If Rhino.LastCommandResult <> 0 Then Exit Function
+	innerPipe = Rhino.FirstObject
+
+	If Rhino.IsCurveClosed(idCurve) Then
+		Rhino.DeleteObjects Array(profile1, profile2)
+		RecPipeCurve = Array(outerPipe, innerPipe)
+		Exit Function
+	End If
+
+	cap = AddPlanarSrf(Array(profile1, profile2))(0)
+	Rhino.DeleteObjects Array(profile1, profile2)
+    RecPipeCurve = Rhino.JoinSurfaces(Array(innerPipe, cap, outerPipe), vbTrue)
+    If IsNull(RecPipeCurve) Then Exit Function
+    Rhino.UnselectAllObjects
+	Rhino.SelectObject RecPipeCurve
+	Rhino.Command "-_Cap", vbFalse
+	RecPipeCurve = Rhino.FirstObject
+End Function
+
+Function AddRectangularSection(idCurve, Width, Height, dblAngle, Percentage)
+	AddRectangularSection = Null
+	Dim crvDomain, vecT
+	Dim arrPt, idRectangle
+	Dim arrCorners(4)
+	Dim Sections()
+
+	arrCorners(0) = Array(Width/2, Height/2, 0)
+	arrCorners(1) = Array(-Width/2, Height/2, 0)
+	arrCorners(2) = Array(-Width/2, -Height/2, 0)
+	arrCorners(3) = Array(Width/2, -Height/2, 0)
+	arrCorners(4) = Array(Width/2, Height/2, 0)
+	idRectangle = Rhino.AddPolyline(arrCorners)
+
+	crvDomain = Rhino.CurveDomain(idCurve)
+	vecT = Rhino.CurveTangent(idCurve, (crvDomain(1)-crvDomain(0)) * Percentage)
+	idRectangle = Rhino.OrientObject(idRectangle, Array(Array(0,0,0), Array(0,0,1)), Array(vecT(0), vecT(1)))
+	idRectangle = Rhino.RotateObject(idRectangle, vecT(0), dblAngle, Array(vecT(0), vecT(1)), vbFalse)
+	AddRectangularSection = idRectangle
+End Function

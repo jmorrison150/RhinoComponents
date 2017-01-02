@@ -1,0 +1,293 @@
+Option Explicit
+'Script written by <David Mans>
+'Script copyrighted by <Neoarchaic Design>
+'Script version Sunday, November 02, 2008 1:18:47 PM
+ 
+Call Main()
+Sub Main()
+    Dim objects, segment
+    objects = Rhino.GetObjects("Select Points, Curves, and Surfaces",,,True)
+    If isNull(objects) Then Exit Sub
+ 
+    segment = Rhino.GetBoolean("DeleteSegments",array("CurveSegments","No","Yes","SurfaceSegments","No","Yes"),array(True,True))
+    If isNull(segment) Then Exit Sub
+ 
+    Call Rhino.EnableRedraw(False)
+    Dim i,r,s,t, pts(), crvs(), srfs(), crvOutput, srfOutput
+    ReDim pts(0), crvs(0), srfs(0)
+ 
+    r=0:s=0:t=0
+    For i = 0 To uBound(objects) Step 1
+        If Rhino.IsPoint(objects(i)) = True Then
+            ReDim Preserve pts(r)
+            pts(r) = objects(i)
+            r=r+1
+        ElseIf Rhino.IsCurve(objects(i)) = True Then
+            ReDim Preserve crvs(s)
+            crvs(s) = objects(i)
+            s=s+1
+        ElseIf Rhino.IsSurface(objects(i)) = True Then
+            ReDim Preserve srfs(t)
+            srfs(t) = objects(i)
+            t=t+1
+        End If
+ 
+    Next
+    If uBound(pts) > 0 Then
+        Call overKillPoints(pts)
+    End If
+    If uBound(crvs) > 0 Then
+        crvOutput = overKillCurves(crvs)
+        If segment(0) = True Then
+            Call partialCrvOverlap(crvOutput)
+        End If
+    End If
+    If uBound(srfs) > 0 Then
+        srfOutput = overKillSurfaces(srfs)
+        If segment(1) = True Then
+            Call partialSrfOverlap(srfOutput)
+        End If
+    End If
+ 
+    Call Rhino.EnableRedraw(True)
+ 
+End Sub
+Function overKillPoints(points)
+    overKillPoints = Null
+    Dim i,j,count, pts(), deleted()
+    count = uBound(points)
+    ReDim pts(count), deleted(count)
+    For i = 0 To count Step 1
+        pts(i) = Rhino.PointCoordinates(points(i))
+        deleted(i) = False
+    Next
+ 
+    For i = 0 To count Step 1
+        For j = 0 To count Step 1
+            If j <> i Then
+                If deleted(j) = False Then
+                    If pts(i)(0) = pts(j)(0) And pts(i)(1) = pts(j)(1) And pts(i)(2) = pts(j)(2) Then
+                        Call Rhino.DeleteObject(points(i))
+                        deleted(i) = True
+                    End If
+                End If
+            End If
+        Next
+    Next
+ 
+End Function
+Function overKillCurves(curves)
+    overKillCurves = Null
+    Dim i,j,k,m,r,count, pts(), blnVal, deleted()
+    count = uBound(curves)
+    ReDim pts(count), deleted(count)
+ 
+    For i = 0 To count Step 1
+        pts(i) = Rhino.CurvePoints(curves(i))
+        deleted(i) = False
+    Next
+    blnVal = 0
+    For i = 0 To count Step 1
+        For j = 0 To count Step 1
+            If j <> i Then
+                If deleted(j) = False Then
+                    If Ubound(pts(i)) = uBound(pts(j)) Then
+                        For k = 0 To Ubound(pts(i)) Step 1
+                            m = Ubound(pts(i))-k
+                            If pts(i)(k)(0) = pts(j)(k)(0) And pts(i)(k)(1) = pts(j)(k)(1) And pts(i)(k)(2) = pts(j)(k)(2) Or pts(i)(k)(0) = pts(j)(m)(0) And pts(i)(k)(1) = pts(j)(m)(1) And pts(i)(k)(2) = pts(j)(m)(2) Then
+                                blnVal = blnVal+1
+                            End If
+                        Next
+ 
+                        If blnVal = uBound(pts(i))+1 Then
+                            deleted(i) = True
+                        End If
+                        blnVal = 0
+                    End If
+                End If
+            End If
+        Next
+    Next
+    r=0
+    Dim crvOutput()
+    For i = 0 To count Step 1
+        If deleted(i) = True Then
+            Call Rhino.DeleteObject(curves(i))
+        Else
+            ReDim Preserve crvOutput(r)
+            crvOutput(r) = curves(i)
+            r = r+1
+        End If
+    Next
+    overKillCurves = crvOutput
+End Function
+Function overKillSurfaces(surfaces)
+    overKillSurfaces = Null
+    Dim i,j,k,m,n,r,s,t,count, tCount, uvCnt
+    Dim aPt(), bPt(), cPt(), dPt(), ePt(), fPt(), gPt(), hPt()
+    Dim ptsA(), pts(), tPts(), sPts(), blnVal, deleted()
+    count = uBound(surfaces)
+    ReDim ptsA(count), pts(count), deleted(count)
+ 
+    For i = 0 To count Step 1
+        r = 0: s = 0
+        ptsA(i) = Rhino.SurfacePoints(surfaces(i))
+        uvCnt = Rhino.SurfacePointCount(surfaces(i))
+        tCount = Ubound(ptsA(i))
+        ReDim tPts(uvCnt(0)-1), sPts(uvCnt(1)-1)
+        For j = 0 To tCount Step 1
+            tPts(r) = ptsA(i)(tCount-j)
+ 
+            r=r+1
+            If r = uvCnt(0) Then
+                r = 0
+                sPts(s) = tPts
+                s = s+1
+            End If
+        Next
+ 
+        ReDim aPt(tCount), bPt(tCount), cPt(tCount), dPt(tCount), ePt(tCount), fPt(tCount), gPt(tCount), hPt(tCount)
+        t = 0
+        For j = 0 To uvCnt(0)-1 Step 1
+            For k = 0 To uvCnt(1)-1 Step 1
+                aPt(t) = sPts(j)(k)
+                bPt(t) = sPts(uvCnt(0)-1-j)(uvCnt(1)-1-k)
+                cPt(t) = sPts(j)(uvCnt(1)-1-k)
+                dPt(t) = sPts(uvCnt(0)-1-j)(k)
+                t=t+1
+            Next
+        Next
+        t = 0
+        For j = 0 To uvCnt(1)-1 Step 1
+            For k = 0 To uvCnt(0)-1 Step 1
+                ePt(t) = sPts(k)(j)
+                fPt(t) = sPts(uvCnt(0)-1-k)(uvCnt(1)-1-j)
+                gPt(t) = sPts(k)(uvCnt(1)-1-j)
+                hPt(t) = sPts(uvCnt(0)-1-k)(j)
+                t=t+1
+            Next
+        Next
+        pts(i) = array(apt,bpt,cpt,dpt,ept,fpt,gpt,hpt)
+        deleted(i) = False
+    Next
+ 
+    blnVal = 0
+    For i = 0 To count Step 1
+        For j = 0 To count Step 1
+            If j <> i Then
+                If deleted(j) = False Then
+                    If Ubound(pts(i)(0)) = uBound(pts(j)(0)) Then
+ 
+                        For m = 0 To 7 Step 1
+                            For n = 0 To 7 Step 1
+                                For k = 0 To Ubound(pts(i)(0)) Step 1
+ 
+                                    If pts(i)(m)(k)(0) = pts(j)(n)(k)(0) And pts(i)(m)(k)(1) = pts(j)(n)(k)(1) And pts(i)(m)(k)(2) = pts(j)(n)(k)(2) Then
+                                        blnVal = blnVal+1
+                                    End If
+ 
+                                Next
+                            Next
+                        Next
+ 
+                        If blnVal >= uBound(pts(j)(0)) Then
+                            Call Rhino.DeleteObject(surfaces(i))
+                            deleted(i) = True
+                        End If
+                        blnVal = 0
+                    End If
+                End If
+            End If
+        Next
+    Next
+    Dim srfOutput()
+    r = 0
+    For i = 0 To count Step 1
+        If deleted(i) = True Then
+            Call Rhino.DeleteObject(surfaces(i))
+        Else
+            ReDim Preserve srfOutput(r)
+            srfOutput(r) = surfaces(i)
+            r=r+1
+        End If
+    Next
+    overKillSurfaces = srfOutput
+End Function
+Function partialCrvOverlap(crvs)
+    partialCrvOverlap = Null
+ 
+    Dim i, j, k, count, blnDelete(), dblOverlap
+ 
+    count = uBound(crvs)
+    dblOverlap = 0
+ 
+    Dim crvPts()
+    ReDim crvPts(count), blnDelete(count)
+ 
+    For i = 0 To count Step 1
+        crvPts(i) = Rhino.CurveEditPoints(crvs(i))
+        blnDelete(i) = False
+    Next
+ 
+    For i = 0 To count Step 1
+        For j = 0 To count Step 1
+            If i <> j Then
+                For k = 0 To uBound(crvPts(j)) Step 1
+                    If Rhino.IsPointOnCurve (crvs(i), crvPts(j)(k)) = True Then
+                        dblOverlap = dblOverlap+1
+                    End If
+                Next
+            End If
+            If uBound(crvPts(j))+1 = dblOverlap Then
+                blnDelete(j) = True
+            End If
+            dblOverlap = 0
+        Next
+    Next
+    For i = 0 To count Step 1
+        If blnDelete(i) = True Then
+            Call Rhino.DeleteObject(crvs(i))
+        End If
+    Next
+ 
+    partialCrvOverlap = array()
+End Function
+Function partialSrfOverlap(srfs)
+    partialSrfOverlap = Null
+ 
+    Dim i, j, k, count, blnDelete(), dblOverlap
+ 
+    count = uBound(srfs)
+    dblOverlap = 0
+ 
+    Dim srfPts()
+    ReDim srfPts(count), blnDelete(count)
+ 
+    For i = 0 To count Step 1
+        srfPts(i) = Rhino.SurfaceEditPoints (srfs(i))
+        blnDelete(i) = False
+    Next
+ 
+    For i = 0 To count Step 1
+        For j = 0 To count Step 1
+            If i <> j Then
+                For k = 0 To uBound(srfPts(j)) Step 1
+                    If Rhino.IsPointOnSurface (srfs(i), srfPts(j)(k)) = True Then
+                        dblOverlap = dblOverlap+1
+                    End If
+                Next
+            End If
+            If uBound(srfPts(j))+1 = dblOverlap Then
+                blnDelete(j) = True
+            End If
+            dblOverlap = 0
+        Next
+    Next
+    For i = 0 To count Step 1
+        If blnDelete(i) = True Then
+            Call Rhino.DeleteObject(srfs(i))
+        End If
+    Next
+ 
+    partialSrfOverlap = array()
+End Function

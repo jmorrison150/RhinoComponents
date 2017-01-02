@@ -1,0 +1,67 @@
+﻿Option Explicit
+'Script by Mitch Heynick
+'Version 3 March 2011
+
+Private dblOldLen,dblOldWid,dblOldRot
+If IsEmpty(dblOldLen)Then dblOldLen = 1.0
+If IsEmpty(dblOldWid)Then dblOldWid = 1.0
+If IsEmpty(dblOldRot)Then dblOldRot = 0.0
+
+Call MultiRectangularPipe
+Sub MultiRectangularPipe
+	
+	Dim arrCrvs,dblLen,dblWid,dblRot
+
+	arrCrvs=Rhino.GetObjects("Select curves to pipe with rectangular section ",4,,True)
+	If not IsArray(arrCrvs) then Exit Sub
+
+	dblLen = Rhino.GetReal( "Length of sides", dblOldLen, 0.0 )
+	If Not IsNumeric(dblLen) Or dblLen <= 0 Then Exit Sub
+	dblOldLen=dblLen
+
+	dblWid = Rhino.GetReal( "Width of sides", dblOldWid, 0.0 )
+	If Not IsNumeric(dblWid) Or dblWid <= 0 Then Exit Sub
+	dblOldWid=dblWid
+
+	dblRot = Rhino.GetReal( "Rotation angle", dblOldRot, 0.0 )
+	If Not IsNumeric(dblRot) Then Exit Sub
+	dblOldRot=dblRot
+
+	dim x,y,arrPLPts,strPL
+	x=dblLen/2
+	y=dblWid/2
+	
+	arrPLPts=Array(Array(-x,-y,0),Array(x,-y,0),Array(x,y,0),Array(-x,y,0),Array(-x,-y,0))	
+	strPL=Rhino.AddPolyline(arrPLPts)
+	
+	If dblrot<>0.0 Then
+		strPL=Rhino.RotateObject(strPL,Array(0,0,0),dblRot)		
+	End If
+
+	Call Rhino.EnableRedraw(False)
+	
+	Dim strPathCrv
+	For each strPathCrv in arrCrvs
+		Call SweepPipe(strPathCrv,strPL)
+	Next
+	Call Rhino.DeleteObject(strPL)	
+	Call Rhino.EnableRedraw(True)	
+End Sub
+
+Sub SweepPipe(byval strCrv, byval strProf)	
+	Dim arrDom,arrPerpF,arrXForm,strXFormPL,arrPipeSrfs
+	arrDom=Rhino.CurveDomain(strcrv)	
+	arrPerpF=Rhino.CurvePerpFrame(strCrv,arrDom(0))
+
+	arrXForm=Rhino.XformRotation(Rhino.WorldXYPlane, arrPerpF)
+	strXFormPL=Rhino.TransformObject(strProf,arrXForm,True)
+
+	arrPipeSrfs=Rhino.AddSweep1(strCrv,Array(strXFormPL))
+	Call Rhino.DeleteObject(strXformPL)
+
+	If IsArray(arrPipeSrfs) Then
+		If Ubound(arrPipeSrfs)=0 Then
+			Call Rhino.CapPlanarholes(arrPipeSrfs(0))
+		End If			
+	End If	
+End Sub
