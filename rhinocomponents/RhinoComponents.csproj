@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="completeGraph.cs" />
     <Compile Include="connectLines.cs" />
     <Compile Include="contourGradient.cs" />
     <Compile Include="dup.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="glazing_extrudeZ.cs" />
     <Compile Include="hotel_rotate.cs" />
     <Compile Include="imageImport.cs" />
+    <Compile Include="intersect.cs" />
     <Compile Include="map.cs" />
     <Compile Include="meshToSurface.cs" />
     <Compile Include="panelDivide.cs" />
@@ -73,6 +75,7 @@
     <Compile Include="trimCurve.cs" />
     <Compile Include="truss.cs" />
     <Compile Include="trussBridge.cs" />
+    <Compile Include="variableArray.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
