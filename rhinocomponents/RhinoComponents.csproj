@@ -69,6 +69,7 @@
     <Compile Include="random.cs" />
     <Compile Include="panelRotate.cs" />
     <Compile Include="sidewalk.cs" />
+    <Compile Include="squarePipe.cs" />
     <Compile Include="subdivideSurface.cs" />
     <Compile Include="sweepTaper.cs" />
     <Compile Include="tree.cs" />

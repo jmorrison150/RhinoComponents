@@ -64,7 +64,9 @@ public class visualPermeability : GH_ScriptInstance {
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(List<Rectangle3d> rectangles, List<Curve> obstacles, List<Surface> axis, ref object outMesh, ref object outLines) {
+    private void RunScript(List<Rectangle3d> rectangles, 
+      List<Curve> obstacles, List<Surface> axis, 
+      ref object outMesh, ref object outLines) {
 
 
         #region beginScript
