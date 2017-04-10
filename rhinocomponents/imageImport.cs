@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 /// <summary>
 /// This class will be instantiated on demand by the Script component.
 /// </summary>
-public class Script_Instance13 : GH_ScriptInstance {
+public class Script_Instance : GH_ScriptInstance {
   #region Utility functions
   /// <summary>Print a String to the [Out] Parameter of the Script component.</summary>
   /// <param name="text">String to print.</param>
@@ -65,24 +65,30 @@ public class Script_Instance13 : GH_ScriptInstance {
   /// they will have a default value.
   /// </summary>
   private void RunScript(Mesh mesh, double amplitude, ref object A) {
-
-
-
-
+ 
+    
+    
+    
     #region runScript
     List<Circle> updateCircles = new List<Circle>();
+    List<Polyline> updatePolylines = new List<Polyline>();
+    int polygon = 4;
 
 
     Vector3d moveWhite = Vector3d.YAxis * amplitude;
     Vector3d moveBlack = Vector3d.YAxis * amplitude * -1.0;
-    double threshold = 25;
+    double threshold = 0.01;
 
     mesh.Normals.ComputeNormals();
 
-    for (int i = 0; i < mesh.VertexColors.Count; i++) {
+    for (int i = 0; i < mesh.VertexColors.Count; i+=2) {
+ 
+        if (i%2==0) { continue; }
+
       double radius = mesh.VertexColors[i].GetBrightness();
-      if (radius<=threshold) { continue; }
-      radius /= 255;
+      //Print(radius.ToString());
+      if (radius <= threshold) { continue; }
+      //radius /= 255;
       radius *= amplitude;
       Point3d point = new Point3d(mesh.Vertices[i]);
 
@@ -90,8 +96,14 @@ public class Script_Instance13 : GH_ScriptInstance {
       Vector3d normal = mesh.Normals[i];
       Plane plane = new Plane(point, normal);
       Circle circle = new Circle(plane, radius);
+      Curve c = circle.ToNurbsCurve();
+      Point3d[] pts;
+      c.DivideByCount(polygon, true, out pts);
+      Polyline pl = new Polyline(pts);
+      pl.Add(pl[0]);
+      updatePolylines.Add(pl);
 
-      updateCircles.Add(circle);
+      //updateCircles.Add(circle);
 
 
       //  //test for white or black (0 to 1.0)
@@ -109,15 +121,19 @@ public class Script_Instance13 : GH_ScriptInstance {
       //  }
       //}
 
-      A = updateCircles;
+      A = updatePolylines;
 
 
+      
     }
     #endregion
 
 
-  }
-    // <Custom additional code> 
 
-    // </Custom additional code> 
+
   }
+
+  // <Custom additional code> 
+
+  // </Custom additional code> 
+}

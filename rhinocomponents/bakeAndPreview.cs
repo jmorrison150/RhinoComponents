@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 /// <summary>
 /// This class will be instantiated on demand by the Script component.
 /// </summary>
-public class Script_Instance : GH_ScriptInstance {
+public class Script_Instance18 : GH_ScriptInstance {
   #region Utility functions
   /// <summary>Print a String to the [Out] Parameter of the Script component.</summary>
   /// <param name="text">String to print.</param>
@@ -64,67 +64,80 @@ public class Script_Instance : GH_ScriptInstance {
   /// Output parameters as ref arguments. You don't have to assign output parameters,
   /// they will have a default value.
   /// </summary>
-  private void RunScript(Surface surface, double width, double length, bool uvToggle, ref object A) {
+  private void RunScript(bool bake, List<GeometryBase> G, Point3d L, Color C) {
+    COL = C;
+    LOCATION = L;
+    NAME = "My block instance";
+    pnts.Clear(); crvs.Clear(); breps.Clear();
 
-    #region beginScript
-    List<Curve> updateCurves = new List<Curve>();
-
-    double panelMin = 50;
-    if (length < panelMin) { length = panelMin; }
-    length = -1;
-    //double surfWidth, surfHeigth;
-    //surface.GetSurfaceSize(out surfWidth, out surfHeigth);
-    int toggleU = 0;
-    int toggleV = 1;
-    if (uvToggle) {
-      toggleU = 1;
-      toggleV = 0;
-      //double swap = surfWidth;
-      //surfWidth = surfHeigth;
-      //surfHeigth = swap;
-    }
-
-    int seed = 0;
-    Random rnd = new Random(seed);
-
-
-
-    Interval domain = surface.Domain(toggleV);
-    Curve mid = surface.IsoCurve(toggleV, domain.Mid);
-    double[] parameters = mid.DivideByLength(width, true);
-    for (int i = 1; i < parameters.Length; i++) {
-      Curve c = surface.IsoCurve(toggleU, parameters[i]);
-      updateCurves.Add(c);
-
-      if (length > 0) {
-        double panelLength = 0;
-        while (panelLength < c.GetLength()) {
-          double panelParam;
-          c.LengthParameter(panelLength, out panelParam);
-          Point2d[] points = new Point2d[2];
-          points[0] = new Point2d(panelParam, parameters[i]);
-          points[1] = new Point2d(panelParam, parameters[i - 1]);
-          if (uvToggle) {
-            points[0] = new Point2d(parameters[i], panelParam);
-            points[1] = new Point2d(parameters[i - 1], panelParam);
-          }
-          Curve cc = surface.InterpolatedCurveOnSurfaceUV(points, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-          updateCurves.Add(cc);
-
-          panelLength += panelMin + (rnd.NextDouble() * length);
-        }
+    foreach (GeometryBase geom in G) {
+      switch (geom.GetType().Name) {
+        case "Point":
+          pnts.Add(((Rhino.Geometry.Point)geom).Location);
+          break;
+        case "Curve":
+          //create a new geometry list for display
+          break;
+        case "PolyCurve":
+          crvs.Add((PolyCurve)geom);
+          break;
+        case "Brep":
+          breps.Add((Brep)geom);
+          break;
+        default:
+          Print("Add a new case for this type: " + geom.GetType().Name);
+          break;
       }
-
     }
 
-    A = updateCurves;
-    #endregion
+    if (bake) {
+      Rhino.DocObjects.InstanceDefinition I = doc.InstanceDefinitions.Find(NAME, false);
 
+      if (I != null)
+        doc.InstanceDefinitions.Delete(I.Index, true, true);
+
+      int index = doc.InstanceDefinitions.Add(NAME, "description", Point3d.Origin, G);
+      doc.Objects.AddInstanceObject(index, Transform.Scale(L, 1));
+    }
   }
 
   // <Custom additional code> 
-  //  public double map(double number, double low1, double high1, double low2, double high2) {
-  //    return low2 + (high2 - low2) * (number - low1) / (high1 - low1);
-  //  }
+  //GEOMETRY Lists to display
+
+  List<Point3d> pnts = new List<Point3d>();
+  List<PolyCurve> crvs = new List<PolyCurve>();
+  List<Brep> breps = new List<Brep>();
+
+  string NAME;
+  Point3d LOCATION;
+  int THICKNESS = 2;
+  Color COL;
+
+  //Return a BoundingBox that contains all the geometry you are about to draw.
+  public override BoundingBox ClippingBox {
+    get {
+      return BoundingBox.Empty;
+    }
+  }
+  //Draw all meshes in this method.
+  public override void DrawViewportMeshes(IGH_PreviewArgs args) {
+
+  }
+
+  //Draw all wires and points in this method.
+  public override void DrawViewportWires(IGH_PreviewArgs args) {
+    foreach (Point3d p in pnts)
+      args.Display.DrawPoint(p, Rhino.Display.PointStyle.ControlPoint, THICKNESS, COL);
+
+    foreach (PolyCurve c in crvs)
+      args.Display.DrawCurve(c, COL, THICKNESS);
+
+    foreach (Brep b in breps)
+      args.Display.DrawBrepShaded(b, new Rhino.Display.DisplayMaterial(COL));
+
+    args.Display.DrawPoint(LOCATION, Rhino.Display.PointStyle.ActivePoint, 3, Color.Black);
+    args.Display.Draw3dText(NAME, Color.Gray, new Plane(LOCATION, Vector3d.ZAxis), THICKNESS / 3, "Arial");
+  }
+
   // </Custom additional code> 
 }

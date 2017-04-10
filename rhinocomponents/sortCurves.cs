@@ -64,67 +64,52 @@ public class Script_Instance : GH_ScriptInstance {
   /// Output parameters as ref arguments. You don't have to assign output parameters,
   /// they will have a default value.
   /// </summary>
-  private void RunScript(Surface surface, double width, double length, bool uvToggle, ref object A) {
+  private void RunScript(List<Curve> curves, ref object A) {
 
-    #region beginScript
-    List<Curve> updateCurves = new List<Curve>();
+    
 
-    double panelMin = 50;
-    if (length < panelMin) { length = panelMin; }
-    length = -1;
-    //double surfWidth, surfHeigth;
-    //surface.GetSurfaceSize(out surfWidth, out surfHeigth);
-    int toggleU = 0;
-    int toggleV = 1;
-    if (uvToggle) {
-      toggleU = 1;
-      toggleV = 0;
-      //double swap = surfWidth;
-      //surfWidth = surfHeigth;
-      //surfHeigth = swap;
+    //sort curves based on start point
+    curves.Sort(delegate (Curve c1, Curve c2) { return c1.PointAtStart.X.CompareTo(c2.PointAtStart.X); });
+    curves.Sort(delegate (Curve c1, Curve c2) { return c1.PointAtStart.Y.CompareTo(c2.PointAtStart.Y); });
+    curves.Sort(delegate (Curve c1, Curve c2) { return c1.PointAtStart.Z.CompareTo(c2.PointAtStart.Z); });
+
+
+
+
+
+
+    //List<Point3d> startPoints = new List<Point3d>();
+    //List<Point3d> endPoints = new List<Point3d>();
+
+    //for (int i = 0; i < curves.Count; i++) {
+    //  startPoints.Add(curves[i].PointAtStart);
+    //  endPoints.Add(curves[i].PointAtEnd);
+    //}
+
+    for (int i = 1; i < curves.Count; i+=2) {
+      curves[i].Reverse();
     }
 
-    int seed = 0;
-    Random rnd = new Random(seed);
 
+    List<Curve> curveSegments = new List<Curve>();
+    if (curves.Count>0) { curveSegments.Add(curves[0]); }
+    for (int i = 1; i < curves.Count; i++) {
 
-
-    Interval domain = surface.Domain(toggleV);
-    Curve mid = surface.IsoCurve(toggleV, domain.Mid);
-    double[] parameters = mid.DivideByLength(width, true);
-    for (int i = 1; i < parameters.Length; i++) {
-      Curve c = surface.IsoCurve(toggleU, parameters[i]);
-      updateCurves.Add(c);
-
-      if (length > 0) {
-        double panelLength = 0;
-        while (panelLength < c.GetLength()) {
-          double panelParam;
-          c.LengthParameter(panelLength, out panelParam);
-          Point2d[] points = new Point2d[2];
-          points[0] = new Point2d(panelParam, parameters[i]);
-          points[1] = new Point2d(panelParam, parameters[i - 1]);
-          if (uvToggle) {
-            points[0] = new Point2d(parameters[i], panelParam);
-            points[1] = new Point2d(parameters[i - 1], panelParam);
-          }
-          Curve cc = surface.InterpolatedCurveOnSurfaceUV(points, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-          updateCurves.Add(cc);
-
-          panelLength += panelMin + (rnd.NextDouble() * length);
-        }
-      }
+      LineCurve lc = new LineCurve(curves[i - 1].PointAtEnd, curves[i].PointAtStart);
+      curveSegments.Add(lc);
+      curveSegments.Add(curves[i]);
 
     }
 
-    A = updateCurves;
-    #endregion
+
+    Curve[] joinedCurves = Curve.JoinCurves(curveSegments, double.MaxValue);
+    A = joinedCurves;
+
+
 
   }
 
   // <Custom additional code> 
-  //  public double map(double number, double low1, double high1, double low2, double high2) {
-  //    return low2 + (high2 - low2) * (number - low1) / (high1 - low1);
-  //  }
+
   // </Custom additional code> 
 }

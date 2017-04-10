@@ -64,67 +64,21 @@ public class Script_Instance : GH_ScriptInstance {
   /// Output parameters as ref arguments. You don't have to assign output parameters,
   /// they will have a default value.
   /// </summary>
-  private void RunScript(Surface surface, double width, double length, bool uvToggle, ref object A) {
-
-    #region beginScript
-    List<Curve> updateCurves = new List<Curve>();
-
-    double panelMin = 50;
-    if (length < panelMin) { length = panelMin; }
-    length = -1;
-    //double surfWidth, surfHeigth;
-    //surface.GetSurfaceSize(out surfWidth, out surfHeigth);
-    int toggleU = 0;
-    int toggleV = 1;
-    if (uvToggle) {
-      toggleU = 1;
-      toggleV = 0;
-      //double swap = surfWidth;
-      //surfWidth = surfHeigth;
-      //surfHeigth = swap;
-    }
-
-    int seed = 0;
-    Random rnd = new Random(seed);
+  private void RunScript(Curve profile, Vector3d direction, double y, ref object A) {
 
 
 
-    Interval domain = surface.Domain(toggleV);
-    Curve mid = surface.IsoCurve(toggleV, domain.Mid);
-    double[] parameters = mid.DivideByLength(width, true);
-    for (int i = 1; i < parameters.Length; i++) {
-      Curve c = surface.IsoCurve(toggleU, parameters[i]);
-      updateCurves.Add(c);
+    Surface s = Extrusion.CreateExtrusion(profile, direction);
 
-      if (length > 0) {
-        double panelLength = 0;
-        while (panelLength < c.GetLength()) {
-          double panelParam;
-          c.LengthParameter(panelLength, out panelParam);
-          Point2d[] points = new Point2d[2];
-          points[0] = new Point2d(panelParam, parameters[i]);
-          points[1] = new Point2d(panelParam, parameters[i - 1]);
-          if (uvToggle) {
-            points[0] = new Point2d(parameters[i], panelParam);
-            points[1] = new Point2d(parameters[i - 1], panelParam);
-          }
-          Curve cc = surface.InterpolatedCurveOnSurfaceUV(points, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-          updateCurves.Add(cc);
+    Brep b = Brep.CreateFromSurface(s);
+    Brep b1 = Brep.CreateFromOffsetFace(b.Faces[0], y, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance, false, true);
 
-          panelLength += panelMin + (rnd.NextDouble() * length);
-        }
-      }
 
-    }
 
-    A = updateCurves;
-    #endregion
-
+    A = b;
   }
 
   // <Custom additional code> 
-  //  public double map(double number, double low1, double high1, double low2, double high2) {
-  //    return low2 + (high2 - low2) * (number - low1) / (high1 - low1);
-  //  }
+
   // </Custom additional code> 
 }

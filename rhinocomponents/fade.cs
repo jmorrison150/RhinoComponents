@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 /// <summary>
 /// This class will be instantiated on demand by the Script component.
 /// </summary>
-public class Script_Instance : GH_ScriptInstance {
+public class Script_Instance14 : GH_ScriptInstance {
   #region Utility functions
   /// <summary>Print a String to the [Out] Parameter of the Script component.</summary>
   /// <param name="text">String to print.</param>
@@ -64,67 +64,35 @@ public class Script_Instance : GH_ScriptInstance {
   /// Output parameters as ref arguments. You don't have to assign output parameters,
   /// they will have a default value.
   /// </summary>
-  private void RunScript(Surface surface, double width, double length, bool uvToggle, ref object A) {
-
-    #region beginScript
-    List<Curve> updateCurves = new List<Curve>();
-
-    double panelMin = 50;
-    if (length < panelMin) { length = panelMin; }
-    length = -1;
-    //double surfWidth, surfHeigth;
-    //surface.GetSurfaceSize(out surfWidth, out surfHeigth);
-    int toggleU = 0;
-    int toggleV = 1;
-    if (uvToggle) {
-      toggleU = 1;
-      toggleV = 0;
-      //double swap = surfWidth;
-      //surfWidth = surfHeigth;
-      //surfHeigth = swap;
-    }
-
-    int seed = 0;
-    Random rnd = new Random(seed);
+  private void RunScript(Curve polygon, Curve line, ref object A) {
 
 
 
-    Interval domain = surface.Domain(toggleV);
-    Curve mid = surface.IsoCurve(toggleV, domain.Mid);
-    double[] parameters = mid.DivideByLength(width, true);
-    for (int i = 1; i < parameters.Length; i++) {
-      Curve c = surface.IsoCurve(toggleU, parameters[i]);
-      updateCurves.Add(c);
+    Point3d anchor = polygon.GetBoundingBox(false).Center;
+    double t;
+    line.ClosestPoint(anchor, out t);
+    Point3d pt = line.PointAt(t);
+    double dist = anchor.DistanceTo(pt);
+    dist = map(dist, 0, 1000, 1.0, 0.1);
+    if (dist < 0.1) { dist = 0.1; }
 
-      if (length > 0) {
-        double panelLength = 0;
-        while (panelLength < c.GetLength()) {
-          double panelParam;
-          c.LengthParameter(panelLength, out panelParam);
-          Point2d[] points = new Point2d[2];
-          points[0] = new Point2d(panelParam, parameters[i]);
-          points[1] = new Point2d(panelParam, parameters[i - 1]);
-          if (uvToggle) {
-            points[0] = new Point2d(parameters[i], panelParam);
-            points[1] = new Point2d(parameters[i - 1], panelParam);
-          }
-          Curve cc = surface.InterpolatedCurveOnSurfaceUV(points, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-          updateCurves.Add(cc);
+    Transform scale = Transform.Scale(anchor, dist);
+    Curve pl = polygon.DuplicateCurve();
+    pl.Transform(scale);
+    A = pl;
 
-          panelLength += panelMin + (rnd.NextDouble() * length);
-        }
-      }
 
-    }
 
-    A = updateCurves;
-    #endregion
+
+
 
   }
 
   // <Custom additional code> 
-  //  public double map(double number, double low1, double high1, double low2, double high2) {
-  //    return low2 + (high2 - low2) * (number - low1) / (high1 - low1);
-  //  }
+
+  public double map(double number, double low1, double high1, double low2, double high2) {
+    return low2 + (high2 - low2) * (number - low1) / (high1 - low1);
+  }
+
   // </Custom additional code> 
 }

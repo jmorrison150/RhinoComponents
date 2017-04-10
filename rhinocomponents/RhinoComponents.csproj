@@ -52,10 +52,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="applyCrvs.cs" />
+    <Compile Include="bakeAndPreview.cs" />
     <Compile Include="completeGraph.cs" />
     <Compile Include="connectLines.cs" />
     <Compile Include="contourGradient.cs" />
     <Compile Include="dup.cs" />
+    <Compile Include="export.cs" />
+    <Compile Include="fade.cs" />
     <Compile Include="headHeight.cs" />
     <Compile Include="glazing_extrudeZ.cs" />
     <Compile Include="hotel_rotate.cs" />
@@ -63,15 +67,19 @@
     <Compile Include="intersect.cs" />
     <Compile Include="map.cs" />
     <Compile Include="meshToSurface.cs" />
+    <Compile Include="offsetSrf.cs" />
     <Compile Include="panelDivide.cs" />
     <Compile Include="planarSrf.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="random.cs" />
     <Compile Include="panelRotate.cs" />
     <Compile Include="sidewalk.cs" />
+    <Compile Include="sortCurves.cs" />
     <Compile Include="squarePipe.cs" />
+    <Compile Include="subdivide.cs" />
     <Compile Include="subdivideSurface.cs" />
     <Compile Include="sweepTaper.cs" />
+    <Compile Include="sweepYZ.cs" />
     <Compile Include="tree.cs" />
     <Compile Include="trimCurve.cs" />
     <Compile Include="truss.cs" />
