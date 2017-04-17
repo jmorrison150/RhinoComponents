@@ -54,9 +54,11 @@
   <ItemGroup>
     <Compile Include="applyCrvs.cs" />
     <Compile Include="bakeAndPreview.cs" />
+    <Compile Include="Block_bake_preview.cs" />
     <Compile Include="completeGraph.cs" />
     <Compile Include="connectLines.cs" />
     <Compile Include="contourGradient.cs" />
+    <Compile Include="copyPlanes.cs" />
     <Compile Include="dup.cs" />
     <Compile Include="export.cs" />
     <Compile Include="fade.cs" />
@@ -64,6 +66,7 @@
     <Compile Include="glazing_extrudeZ.cs" />
     <Compile Include="hotel_rotate.cs" />
     <Compile Include="imageImport.cs" />
+    <Compile Include="insertBlocks.cs" />
     <Compile Include="intersect.cs" />
     <Compile Include="map.cs" />
     <Compile Include="meshToSurface.cs" />
@@ -85,6 +88,7 @@
     <Compile Include="truss.cs" />
     <Compile Include="trussBridge.cs" />
     <Compile Include="variableArray.cs" />
+    <Compile Include="visualPermeability01.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

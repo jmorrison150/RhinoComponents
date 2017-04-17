@@ -64,7 +64,8 @@ public class Script_Instance4 : GH_ScriptInstance {
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(List<double> graph, List<Plane> planes, List<Curve> curves, List<Brep> breps, double maxDist, double offsetDist, bool reset, ref object A, ref object B) {
+    private void RunScript(List<double> graph, List<Plane> planes, List<Curve> curves, List<Brep> breps, 
+      double maxDist, double offsetDist, bool reset, ref object A, ref object B) {
 
 
 

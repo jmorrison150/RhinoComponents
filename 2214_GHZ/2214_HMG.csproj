@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="copyPlanes.cs" />
     <Compile Include="horizontal_lines.cs" />
     <Compile Include="planes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
