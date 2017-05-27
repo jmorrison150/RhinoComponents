@@ -344,7 +344,7 @@ namespace gsd {
 
             //Set layer
             if (layer != null && Rhino.DocObjects.Layer.IsValidName(layer) == true) {
-                System.Drawing.Color color = System.Drawing.Color.Magenta;
+                System.Drawing.Color color = System.Drawing.Color.LightGray;
 
                 //Get the current layer index
 
@@ -357,7 +357,9 @@ namespace gsd {
                     myLayer.Name = layer;
                     myLayer.Color = color;
                     myLayer.PlotWeight = 0.0;
-                    //Add the layer to the layer table
+                    myLayer.IsVisible = false;
+                  
+          //Add the layer to the layer table
                     layerIndex = layerTable.Add(myLayer);
                 }
 

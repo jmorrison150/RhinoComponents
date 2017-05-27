@@ -9,7 +9,7 @@ using System.IO;
 
 using Rhino;
 using Rhino.Geometry;
-//using Grasshopper.Kernel;
+using Grasshopper.Kernel;
 
 namespace gsd {
     public class SurfTM : Grasshopper.Kernel.GH_Component {
@@ -249,6 +249,7 @@ namespace gsd {
             #endregion
         }
         
+
         private List<GH_FileWatcher> m_watchers;
 
         protected override void AfterSolveInstance() {
