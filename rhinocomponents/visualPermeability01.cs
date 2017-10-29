@@ -64,7 +64,7 @@ public class Script_Instance : GH_ScriptInstance {
   /// Output parameters as ref arguments. You don't have to assign output parameters,
   /// they will have a default value.
   /// </summary>
-  private void RunScript(Rectangle3d rectangle, List<Curve> obstacles, ref object outMesh) {
+  private void RunScript(List<Curve> obstacles, ref object outMesh) {
 
 
 
@@ -72,6 +72,14 @@ public class Script_Instance : GH_ScriptInstance {
     double resolution = 100.000;
     double viewRadius = 3000.000;
     int accuracy = 20;
+
+    BoundingBox bb = BoundingBox.Unset;
+    for (int i = 0; i < obstacles.Count; i++) {
+      bb.Union(obstacles[i].GetBoundingBox(false));
+    }
+    Vector3d offset = new Vector3d(viewRadius * 1.1, viewRadius * 1.1, 0.0);
+    Plane plane = new Plane(bb.Min-offset, Vector3d.ZAxis);
+    Rectangle3d rectangle = new Rectangle3d(plane, bb.Max.X - bb.Min.X+ (viewRadius*2.2), bb.Max.Y - bb.Min.Y+(viewRadius*2.2));
 
 
     Mesh mesh = meshPlane(rectangle, resolution);

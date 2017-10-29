@@ -45,11 +45,3 @@ C:\Data\Dropbox\code\surfTM\obj\Debug\gsd.Properties.Resources.resources
 C:\Data\Dropbox\code\surfTM\obj\Debug\surfTM.csproj.GenerateResource.Cache
 C:\Data\Dropbox\code\surfTM\obj\Debug\gsd.dll
 C:\Data\Dropbox\code\surfTM\obj\Debug\gsd.pdb
-C:\data\RhinoComponents\surfTM\obj\Debug\surfTM.csprojResolveAssemblyReference.cache
-C:\data\RhinoComponents\surfTM\obj\Debug\gsd.Properties.Resources.resources
-C:\data\RhinoComponents\surfTM\obj\Debug\surfTM.csproj.GenerateResource.Cache
-C:\data\RhinoComponents\surfTM\obj\Debug\gsd.dll
-C:\data\RhinoComponents\surfTM\obj\Debug\gsd.pdb
-C:\data\RhinoComponents\surfTM\bin\Debug\Resources\machtssrgm.ttf
-C:\data\RhinoComponents\surfTM\bin\Debug\gsd.dll
-C:\data\RhinoComponents\surfTM\bin\Debug\gsd.pdb

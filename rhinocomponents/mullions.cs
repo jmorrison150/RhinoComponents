@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 /// <summary>
 /// This class will be instantiated on demand by the Script component.
 /// </summary>
-public class Script_Instance : GH_ScriptInstance
+public class Script_Instance47 : GH_ScriptInstance
 {
     #region Utility functions
     /// <summary>Print a String to the [Out] Parameter of the Script component.</summary>
@@ -65,67 +65,55 @@ public class Script_Instance : GH_ScriptInstance
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Curve curve, double slider, double x, ref object outCurve)
+    private void RunScript(Surface surface, double width, double length, ref object A, ref object B)
     {
 
+
+
+
+
+
+
         #region beginScript
-        if (curve == null) { return; }
+        Curve min1 = surface.IsoCurve(1, surface.Domain(0).Min);
+        double[] pts1 = min1.DivideByLength(length, true);
+        Curve[] crvs1 = new Curve[pts1.Length];
 
 
-
-        //declare variables
-        int curveResolution = 200;
-        double amplitude = 1.0;
-        double frequency = 10.0;
-        double phaseShift = 0.0;
-
-        //draw the curve
-        double[] parameters = curve.DivideByCount(curveResolution, true);
-        Point3d[] points = new Point3d[parameters.Length+1];
-        for (int i = 0; i < parameters.Length; i++)
-        {
-            double equation;
-            Point3d curvePoint = curve.PointAt(parameters[i]);
-            Plane frame;
-            curve.FrameAt(parameters[i], out frame);
-
-
-
-
-            //the equation is divided into several lines for legibility
-            //start with something that changes, like normalized length
-            //you can change the slider to override any variable, try amplitude
-            amplitude = x;
-            frequency = slider;
-
-            equation = (double)i / (parameters.Length - 1);
-            equation *= (2 * Math.PI);
-            equation *= frequency;
-            //equation *= decay(i);
-            equation += phaseShift;
-            equation = Math.Sin(equation);
-            equation *= amplitude;
-            //equation *= decay(i);
-
-
-
-
-            //output
-            points[i] = curvePoint + (frame.YAxis * equation);
+        for (int i = 0; i < pts1.Length; i++)        {
+            crvs1[i] = surface.IsoCurve(0, pts1[i]);
         }
-        points[points.Length-1] = points[0];
-        Curve c = Curve.CreateInterpolatedCurve(points, 3);
-        c.MakeClosed(1.0);
-        outCurve = c;
-  
-    #endregion
+
+
+
+        //Width
+        Curve min0 = surface.IsoCurve(0, surface.Domain(1).Min);
+        double[] pts0 = min0.DivideByLength(width, true);
+        Curve[] crvs0 = new Curve[pts0.Length];
+
+
+        for (int i = 0; i < pts0.Length; i++)        {
+            crvs0[i] = surface.IsoCurve(1, pts0[i]);
+        }
+
+
+
+        B = crvs0;
+
+#endregion
+
+
+
+
+
+
+
+
+
 
     }
 
     // <Custom additional code> 
-    double decay(double i)
-    {
-        return Math.Sin(i * i * 0.0001);
-    }
+
     // </Custom additional code> 
 }

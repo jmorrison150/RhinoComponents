@@ -31,13 +31,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GH_IO">
-      <HintPath>..\..\..\..\..\..\Users\JM\AppData\Roaming\McNeel\Rhinoceros\5.0\Plug-ins\Grasshopper {B45A29B1-4343-4035-989E-044E8580D9CF}\0.9.76.0\GH_IO.dll</HintPath>
+      <HintPath>C:\Users\12372\AppData\Roaming\McNeel\Rhinoceros\5.0\Plug-ins\Grasshopper {B45A29B1-4343-4035-989E-044E8580D9CF}\0.9.76.0\GH_IO.dll</HintPath>
     </Reference>
     <Reference Include="GH_Util">
-      <HintPath>..\..\..\..\..\..\Users\JM\AppData\Roaming\McNeel\Rhinoceros\5.0\Plug-ins\Grasshopper {B45A29B1-4343-4035-989E-044E8580D9CF}\0.9.76.0\GH_Util.dll</HintPath>
+      <HintPath>C:\Users\12372\AppData\Roaming\McNeel\Rhinoceros\5.0\Plug-ins\Grasshopper {B45A29B1-4343-4035-989E-044E8580D9CF}\0.9.76.0\GH_Util.dll</HintPath>
     </Reference>
     <Reference Include="Grasshopper">
-      <HintPath>..\..\..\..\..\..\Users\JM\AppData\Roaming\McNeel\Rhinoceros\5.0\Plug-ins\Grasshopper {B45A29B1-4343-4035-989E-044E8580D9CF}\0.9.76.0\Grasshopper.dll</HintPath>
+      <HintPath>C:\Users\12372\AppData\Roaming\McNeel\Rhinoceros\5.0\Plug-ins\Grasshopper {B45A29B1-4343-4035-989E-044E8580D9CF}\0.9.76.0\Grasshopper.dll</HintPath>
     </Reference>
     <Reference Include="RhinoCommon">
       <HintPath>C:\Program Files\Rhinoceros 5.0\System\RhinoCommon.dll</HintPath>
@@ -54,7 +54,9 @@
   <ItemGroup>
     <Compile Include="applyCrvs.cs" />
     <Compile Include="bakeAndPreview.cs" />
+    <Compile Include="blank.cs" />
     <Compile Include="Block_bake_preview.cs" />
+    <Compile Include="boxOfThings.cs" />
     <Compile Include="completeGraph.cs" />
     <Compile Include="connectLines.cs" />
     <Compile Include="contourGradient.cs" />
@@ -62,6 +64,7 @@
     <Compile Include="dup.cs" />
     <Compile Include="export.cs" />
     <Compile Include="fade.cs" />
+    <Compile Include="floors.cs" />
     <Compile Include="headHeight.cs" />
     <Compile Include="glazing_extrudeZ.cs" />
     <Compile Include="hotel_rotate.cs" />
@@ -70,6 +73,7 @@
     <Compile Include="intersect.cs" />
     <Compile Include="map.cs" />
     <Compile Include="meshToSurface.cs" />
+    <Compile Include="mullions.cs" />
     <Compile Include="offsetSrf.cs" />
     <Compile Include="panelDivide.cs" />
     <Compile Include="planarSrf.cs" />
@@ -77,6 +81,7 @@
     <Compile Include="random.cs" />
     <Compile Include="panelRotate.cs" />
     <Compile Include="sidewalk.cs" />
+    <Compile Include="slice.cs" />
     <Compile Include="sortCurves.cs" />
     <Compile Include="squarePipe.cs" />
     <Compile Include="subdivide.cs" />

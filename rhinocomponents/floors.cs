@@ -65,67 +65,48 @@ public class Script_Instance : GH_ScriptInstance
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Curve curve, double slider, double x, ref object outCurve)
+    private void RunScript(Surface surface, object y, ref object A)
     {
 
         #region beginScript
-        if (curve == null) { return; }
+        //meters
+        double groundFloorHeight = 6.0;
+        double typicalFloorHeight = 4.0;
 
 
 
-        //declare variables
-        int curveResolution = 200;
-        double amplitude = 1.0;
-        double frequency = 10.0;
-        double phaseShift = 0.0;
 
-        //draw the curve
-        double[] parameters = curve.DivideByCount(curveResolution, true);
-        Point3d[] points = new Point3d[parameters.Length+1];
-        for (int i = 0; i < parameters.Length; i++)
+        Brep b = surface.ToBrep();
+        BoundingBox bb = surface.GetBoundingBox(false);
+        Point3d minPt = bb.Min;
+        //Plane plane0 = new Plane(minPt, Vector3d.ZAxis);
+        Plane plane1 = new Plane(minPt + (Vector3d.ZAxis * groundFloorHeight), Vector3d.ZAxis * typicalFloorHeight);
+        List<Brep> updateBreps = new List<Brep>();
+
+        double currentZ = bb.Min.Z;
+
+        while (true)
         {
-            double equation;
-            Point3d curvePoint = curve.PointAt(parameters[i]);
-            Plane frame;
-            curve.FrameAt(parameters[i], out frame);
+            Point3d origin = new Point3d(0, 0, currentZ);
+            Plane p = new Plane(origin, Vector3d.ZAxis);
+            Curve[] crvs = Brep.CreateContourCurves(b, plane1);
 
 
-
-
-            //the equation is divided into several lines for legibility
-            //start with something that changes, like normalized length
-            //you can change the slider to override any variable, try amplitude
-            amplitude = x;
-            frequency = slider;
-
-            equation = (double)i / (parameters.Length - 1);
-            equation *= (2 * Math.PI);
-            equation *= frequency;
-            //equation *= decay(i);
-            equation += phaseShift;
-            equation = Math.Sin(equation);
-            equation *= amplitude;
-            //equation *= decay(i);
-
-
-
-
-            //output
-            points[i] = curvePoint + (frame.YAxis * equation);
         }
-        points[points.Length-1] = points[0];
-        Curve c = Curve.CreateInterpolatedCurve(points, 3);
-        c.MakeClosed(1.0);
-        outCurve = c;
-  
-    #endregion
+
+
+
+
+        A = crvs;
+
+        #endregion
+
+
+
 
     }
 
     // <Custom additional code> 
-    double decay(double i)
-    {
-        return Math.Sin(i * i * 0.0001);
-    }
+
     // </Custom additional code> 
 }

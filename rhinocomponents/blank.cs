@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 /// <summary>
 /// This class will be instantiated on demand by the Script component.
 /// </summary>
-public class Script_Instance11 : GH_ScriptInstance {
+public class Script_Instance : GH_ScriptInstance {
   #region Utility functions
   /// <summary>Print a String to the [Out] Parameter of the Script component.</summary>
   /// <param name="text">String to print.</param>
@@ -64,56 +64,14 @@ public class Script_Instance11 : GH_ScriptInstance {
   /// Output parameters as ref arguments. You don't have to assign output parameters,
   /// they will have a default value.
   /// </summary>
-  /// 
+  private void RunScript(List<Curve> x, object y, ref object A) {
 
-
-  private void RunScript(Rectangle3d rect, double resolution, Mesh mesh, ref object A) {
-
-    #region runScript
-
-    if (resolution <= 0) {
-      return;
-    }
-    int resWidth = (int)(rect.Width / resolution);
-    int resHeight = (int)(rect.Height / resolution);
-
-    Point3d[] pts = new Point3d[resWidth * resHeight];
-    List<Point3d> updatePoints = new List<Point3d>();
-
-
-    for (int i = 0; i < resWidth; i++) {
-      double x = map(i, 0, resWidth - 1, 0.0, 1.0);
-      for (int k = 0; k < resHeight; k++) {
-        double y = map(k, 0, resHeight - 1, 0.0, 1.0);
-        Point3d point = rect.PointAt(x, y);
-        updatePoints.Add(point);
-      }
+    double d = 0;
+    for (int i = 0; i < x.Count; i++) {
+      d += x[i].GetLength();
     }
 
-    for (int i = 0; i < updatePoints.Count; i++) {
-      Ray3d ray = new Ray3d(updatePoints[i], Vector3d.ZAxis);
-      double intersection = Rhino.Geometry.Intersect.Intersection.MeshRay(mesh, ray);
-      updatePoints[i] = ray.PointAt(intersection);
-    }
-
-    NurbsSurface ns;
-    ns = NurbsSurface.CreateFromPoints(updatePoints, resWidth, resHeight, 3, 3);
-
-    //NurbsSurface.CreateNetworkSurface
-
-    A = ns;
-    #endregion
-
-
-
-
-
-
-
-
-
-
-
+    A = d;
 
 
 
@@ -122,8 +80,6 @@ public class Script_Instance11 : GH_ScriptInstance {
   }
 
   // <Custom additional code> 
-  public double map(double number, double low1, double high1, double low2, double high2) {
-    return low2 + (high2 - low2) * (number - low1) / (high1 - low1);
-  }
+
   // </Custom additional code> 
 }
