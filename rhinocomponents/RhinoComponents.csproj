@@ -71,13 +71,16 @@
     <Compile Include="imageImport.cs" />
     <Compile Include="insertBlocks.cs" />
     <Compile Include="intersect.cs" />
+    <Compile Include="isPointInside.cs" />
     <Compile Include="map.cs" />
     <Compile Include="meshToSurface.cs" />
     <Compile Include="mullions.cs" />
     <Compile Include="offsetSrf.cs" />
     <Compile Include="panelDivide.cs" />
     <Compile Include="planarSrf.cs" />
+    <Compile Include="pointsToCSV.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ptToSrf.cs" />
     <Compile Include="random.cs" />
     <Compile Include="panelRotate.cs" />
     <Compile Include="sidewalk.cs" />
