@@ -65,22 +65,23 @@ public class Script_Instance : GH_ScriptInstance
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Point3d points, double scale, double rotate, ref object A)
+    private void RunScript(Curve curve, double degrees, ref object A)
     {
 
-        Circle c = new Circle(new Plane(points, Vector3d.ZAxis), scale);
-        NurbsCurve nc = c.ToNurbsCurve();
-        Point3d[] points1 = new Point3d[3];
-        nc.DivideByCount(points1.Length, true, out points1);
-        Polyline pl = new Polyline(points1);
-        pl.Add(points1[0]);
-        Transform xform = Transform.Rotation(rotate / 180 * Math.PI, points);
-        pl.Transform(xform);
-        A = pl;
+        double angle = degreeToRadians(degrees);
+        Point3d rotateOrigin = curve.GetBoundingBox(false).Min;
+        Vector3d rotateVector = (Vector3d)rotateOrigin + Vector3d.XAxis;
 
+        Transform rotation = Transform.Rotation(angle, Vector3d.YAxis, rotateOrigin);
+
+        curve.Transform(rotation);
+        A = curve;
     }
 
     // <Custom additional code> 
-
+    public double degreeToRadians(double angle)
+    {
+        return (Math.PI / 180) * angle;
+    }
     // </Custom additional code> 
 }

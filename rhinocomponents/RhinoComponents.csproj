@@ -57,6 +57,7 @@
     <Compile Include="blank.cs" />
     <Compile Include="Block_bake_preview.cs" />
     <Compile Include="boxOfThings.cs" />
+    <Compile Include="circlePackingCommand.cs" />
     <Compile Include="completeGraph.cs" />
     <Compile Include="connectLines.cs" />
     <Compile Include="contourGradient.cs" />
@@ -67,10 +68,12 @@
     <Compile Include="floors.cs" />
     <Compile Include="headHeight.cs" />
     <Compile Include="glazing_extrudeZ.cs" />
+    <Compile Include="heightMap.cs" />
     <Compile Include="hotel_rotate.cs" />
     <Compile Include="imageImport.cs" />
     <Compile Include="insertBlocks.cs" />
     <Compile Include="intersect.cs" />
+    <Compile Include="intersectBrep.cs" />
     <Compile Include="isPointInside.cs" />
     <Compile Include="map.cs" />
     <Compile Include="meshToSurface.cs" />
@@ -83,6 +86,7 @@
     <Compile Include="ptToSrf.cs" />
     <Compile Include="random.cs" />
     <Compile Include="panelRotate.cs" />
+    <Compile Include="rotate3d.cs" />
     <Compile Include="sidewalk.cs" />
     <Compile Include="slice.cs" />
     <Compile Include="sortCurves.cs" />

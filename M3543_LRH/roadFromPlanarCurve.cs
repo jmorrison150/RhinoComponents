@@ -65,18 +65,56 @@ public class Script_Instance : GH_ScriptInstance
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Point3d points, double scale, double rotate, ref object A)
+    private void RunScript(List<Curve> roads, Point3d startPt, Point3d endPt, ref object A, ref object B)
     {
 
-        Circle c = new Circle(new Plane(points, Vector3d.ZAxis), scale);
-        NurbsCurve nc = c.ToNurbsCurve();
-        Point3d[] points1 = new Point3d[3];
-        nc.DivideByCount(points1.Length, true, out points1);
-        Polyline pl = new Polyline(points1);
-        pl.Add(points1[0]);
-        Transform xform = Transform.Rotation(rotate / 180 * Math.PI, points);
-        pl.Transform(xform);
-        A = pl;
+
+
+
+
+
+
+
+
+#region beginScript
+        List<Curve> updateCurves = new List<Curve>();
+        List<double> updateSlope = new List<double>();
+
+        for (int j = 0; j < roads.Count; j++)
+        {
+
+
+        Point3d[] points;
+        roads[j].DivideByLength(1.0, true, out points);
+        double height = endPt.Z - startPt.Z;
+        double increment = height / points.Length;
+
+        for (int i = 0; i < points.Length; i++)
+        {
+            points[i].Z += increment * i;
+        }
+
+        Curve c = Curve.CreateInterpolatedCurve(points, 3);
+            updateCurves.Add(c);
+            double slope = height / c.GetLength();
+            updateSlope.Add(slope);
+        }
+        A = updateCurves;
+        B = updateSlope;
+
+
+#endregion
+
+
+
+
+
+
+
+
+
+
+
 
     }
 

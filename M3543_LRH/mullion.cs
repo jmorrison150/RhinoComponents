@@ -28,8 +28,7 @@ using System.Runtime.InteropServices;
 /// <summary>
 /// This class will be instantiated on demand by the Script component.
 /// </summary>
-public class Script_Instance : GH_ScriptInstance
-{
+public class Script_Instance : GH_ScriptInstance {
     #region Utility functions
     /// <summary>Print a String to the [Out] Parameter of the Script component.</summary>
     /// <param name="text">String to print.</param>
@@ -65,22 +64,59 @@ public class Script_Instance : GH_ScriptInstance
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Point3d points, double scale, double rotate, ref object A)
-    {
+    private void RunScript(Brep brep, double width, double length, ref object A, ref object B) {
 
-        Circle c = new Circle(new Plane(points, Vector3d.ZAxis), scale);
-        NurbsCurve nc = c.ToNurbsCurve();
-        Point3d[] points1 = new Point3d[3];
-        nc.DivideByCount(points1.Length, true, out points1);
-        Polyline pl = new Polyline(points1);
-        pl.Add(points1[0]);
-        Transform xform = Transform.Rotation(rotate / 180 * Math.PI, points);
-        pl.Transform(xform);
-        A = pl;
 
+        #region beginScript
+
+        List<Curve> updateCrvs = new List<Curve>();
+
+
+        for (int i = 0; i < brep.Faces.Count; i++) {
+
+
+            Curve min1 = brep.Faces[i].IsoCurve(1, brep.Faces[i].Domain(0).Min);
+            //Curve[] min2 = brep.Faces[i].TrimAwareIsoCurve(1, brep.Faces[i].Domain(0).Min);
+            double[] pts1 = min1.DivideByLength(length, true);
+            Curve[][] crvs1 = new Curve[pts1.Length][];
+
+
+            for (int j = 0; j < pts1.Length; j++) {
+                crvs1[j] = brep.Faces[i].TrimAwareIsoCurve(0, pts1[j]);
+                for (int k = 0; k < crvs1[j].Length; k++) {
+                    updateCrvs.Add(crvs1[j][k]);
+                }
+            }
+
+
+
+
+            //Width
+            Curve min0 = brep.Faces[i].IsoCurve(0, brep.Faces[i].Domain(1).Min);
+            double[] pts0 = min0.DivideByLength(width, true);
+            Curve[][] crvs0 = new Curve[pts0.Length][];
+
+
+            for (int j = 0; j < pts0.Length; j++) {
+                crvs0[j] = brep.Faces[i].TrimAwareIsoCurve(1, pts0[j]);
+                for (int k = 0; k < crvs0[j].Length; k++) {
+                    updateCrvs.Add(crvs0[j][k]);
+                }
+            }
+
+            A = updateCrvs;
+
+
+        }
+        #endregion
+
+
+
+
+
+
+
+        // <Custom additional code> 
+
+        // </Custom additional code> 
     }
-
-    // <Custom additional code> 
-
-    // </Custom additional code> 
-}
