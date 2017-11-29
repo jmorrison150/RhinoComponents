@@ -64,10 +64,53 @@ public class Script_Instance : GH_ScriptInstance {
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Brep brep, double width, double length, ref object A, ref object B) {
-
-
+    private void RunScript(Brep brep, ref object A, ref object B) {
         #region beginScript
+
+        double glazingWidth = 2.400;
+        double glazingLength = 1.200;
+        double mullionWidth = 0.050;
+        double mullionLength = 0.200;
+
+
+        double supportOffset = 1.000;
+        double supportOpeningWidth = glazingWidth * 4;
+        double supportOpeningLength = glazingLength * 3;
+        double supportMullionWidth = 0.200;
+        double supportMullionLength = 0.600;
+
+
+        List<Brep> updateBreps = new List<Brep>();
+
+        Curve[] crvs = mullions(brep, glazingWidth, glazingLength);
+        for (int i = 0; i < crvs.Length; i++) {
+            Brep[] breps = squarePipe(crvs[i], mullionWidth, mullionLength);
+            for (int j = 0; j < breps.Length; j++) {
+                updateBreps.Add(breps[j]);
+            }
+        }
+
+        for (int i = 0; i < brep.Faces.Count; i++) {
+            Brep b = brep.Faces[i].Offset(supportOffset, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance).ToBrep();
+            Curve[] crvs0 = mullions(b, supportOpeningWidth, supportOpeningLength);
+            for (int j = 0; j < crvs0.Length; j++) {
+                Brep[] breps = squarePipe(crvs0[j], supportMullionWidth, supportMullionLength);
+                for (int k = 0; k < breps.Length; k++) {
+                    updateBreps.Add(breps[k]);
+                }
+            }
+        }
+
+        A = updateBreps;
+        #endregion
+
+    }
+
+
+    // <Custom additional code> 
+    #region customCode
+    Curve[] mullions(Brep brep, double width, double length) {
+
 
         List<Curve> updateCrvs = new List<Curve>();
 
@@ -75,11 +118,10 @@ public class Script_Instance : GH_ScriptInstance {
         for (int i = 0; i < brep.Faces.Count; i++) {
 
 
+            //Length
             Curve min1 = brep.Faces[i].IsoCurve(1, brep.Faces[i].Domain(0).Min);
-            //Curve[] min2 = brep.Faces[i].TrimAwareIsoCurve(1, brep.Faces[i].Domain(0).Min);
             double[] pts1 = min1.DivideByLength(length, true);
             Curve[][] crvs1 = new Curve[pts1.Length][];
-
 
             for (int j = 0; j < pts1.Length; j++) {
                 crvs1[j] = brep.Faces[i].TrimAwareIsoCurve(0, pts1[j]);
@@ -104,19 +146,64 @@ public class Script_Instance : GH_ScriptInstance {
                 }
             }
 
-            A = updateCrvs;
-
-
         }
-        #endregion
+        return updateCrvs.ToArray();
 
-
-
-
-
-
-
-        // <Custom additional code> 
-
-        // </Custom additional code> 
     }
+    Brep[] squarePipe(Curve curve, double width, double length) {
+
+
+        int resolution = 200;
+        Point3d[] pts;
+        double[] ts = curve.DivideByCount(resolution, true, out pts);
+
+
+
+
+
+        Polyline pl = new Polyline(pts);
+        pl.ReduceSegments(Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
+        Plane[] planes = new Plane[pl.Count];
+        Curve[] profiles = new Curve[pl.Count];
+        double[] polylineParameters = new double[pl.Count];
+        for (int i = 0; i < pl.Count; i++) {
+            double t;
+            curve.ClosestPoint(pl[i], out t);
+            polylineParameters[i] = t;
+        }
+
+        for (int i = 0; i < pl.Count; i++) {
+
+            //curve.FrameAt(polylineParameters[i], out planes[i]);
+            planes = curve.GetPerpendicularFrames(polylineParameters);
+            //curve.PerpendicularFrameAt(polylineParameters[i], out planes[i]);
+
+            Interval widthInterval = new Interval(-width * 0.5, width * 0.5);
+            Interval widthLength = new Interval(-length * 0.5, length * 0.5);
+
+            Rectangle3d rt = new Rectangle3d(planes[i], widthInterval, widthLength);
+
+
+
+
+
+            profiles[i] = rt.ToNurbsCurve();
+        }
+
+        Brep[] lofts = Brep.CreateFromLoft(profiles, Point3d.Unset, Point3d.Unset, LoftType.Tight, false);
+        for (int i = 0; i < lofts.Length; i++) {
+            lofts[i].Flip();
+            lofts[i] = lofts[i].CapPlanarHoles(RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
+        }
+
+        return lofts;
+
+
+
+    }
+    #endregion
+
+
+
+    // </Custom additional code> 
+}
