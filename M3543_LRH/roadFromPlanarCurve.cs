@@ -70,12 +70,6 @@ public class Script_Instance : GH_ScriptInstance
 
 
 
-
-
-
-
-
-
 #region beginScript
         List<Curve> updateCurves = new List<Curve>();
         List<double> updateSlope = new List<double>();
@@ -101,13 +95,7 @@ public class Script_Instance : GH_ScriptInstance
         }
         A = updateCurves;
         B = updateSlope;
-
-
 #endregion
-
-
-
-
 
 
 

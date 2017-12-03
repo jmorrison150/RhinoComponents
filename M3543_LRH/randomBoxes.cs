@@ -28,8 +28,7 @@ using System.Runtime.InteropServices;
 /// <summary>
 /// This class will be instantiated on demand by the Script component.
 /// </summary>
-public class Script_Instance42 : GH_ScriptInstance
-{
+public class Script_Instance : GH_ScriptInstance {
     #region Utility functions
     /// <summary>Print a String to the [Out] Parameter of the Script component.</summary>
     /// <param name="text">String to print.</param>
@@ -65,9 +64,7 @@ public class Script_Instance42 : GH_ScriptInstance
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Brep brep, int seed, int count, double max, double min, ref object A)
-    {
-
+    private void RunScript(Brep brep, int seed, int count, double max, double min, ref object A) {
 
 
 
@@ -76,13 +73,15 @@ public class Script_Instance42 : GH_ScriptInstance
         #region beginScript
         Brep[] updateBreps = new Brep[count];
         Perlin rnd2 = new Perlin();
-        Random rnd = new Random(seed);
+        Random rnd = new Random(0);
         BoundingBox bb = brep.GetBoundingBox(false);
 
 
 
-        for (int i = 0; i < updateBreps.Length; i++)
-        {
+
+        for (int i = 0; i < updateBreps.Length; i++) {
+            Perlin perlin = new Perlin();
+
             double x = rnd.NextDouble();
             double y = rnd.NextDouble();
             double z = rnd.NextDouble();
@@ -91,22 +90,31 @@ public class Script_Instance42 : GH_ScriptInstance
             double sizeY = rnd.NextDouble();
             double sizeZ = rnd.NextDouble();
 
+            double size = Perlin.perlin(x + seed, y + seed, z + seed);
+            size *= size;
+
+
             double rotateZ = rnd.NextDouble();
-            double maxDegrees = 5.0;
+            double maxDegrees = 90.0;
 
             x = ((bb.Max.X - bb.Min.X) * x) + bb.Min.X;
             y = (((bb.Max.Y - bb.Min.Y) * y) + bb.Min.Y);
-            //z = ((bb.Max.Z - bb.Min.Z) * z) + bb.Min.Z;
-            z = bb.Min.Z;
+            z = ((bb.Max.Z - bb.Min.Z) * z) + bb.Min.Z;
+            //z = bb.Min.Z;
 
- 
 
-            sizeX = (((max - min) * sizeX) + min);
-            sizeY = (((max - min) * sizeY) + min) * 2.0;
+
+            //sizeX = (((max - min) * sizeX) + min) * 0.25;
+            //sizeY = (((max - min) * sizeY) + min);
             //sizeZ = (((max - min) * sizeZ) + min);
-            sizeZ = map(sizeZ, 0.0, 1.0, 0, bb.Max.Z - bb.Min.Z);
+            //sizeZ = map(sizeZ, 0.0, 1.0, 0, bb.Max.Z - bb.Min.Z);
+            sizeX = 0.020;
+            sizeY = map(size, 0, 1, min, max);
+            sizeZ = map(size, 0, 1, min, max);
+            Print(sizeY.ToString());
+
             rotateZ -= 0.5;
-            rotateZ  = rotateZ * (Math.PI / 180.0) * maxDegrees;
+            rotateZ = rotateZ * (Math.PI / 180.0) * maxDegrees;
 
             Point3d origin = new Point3d(x, y, z);
             Plane basePlane = new Plane(origin, Vector3d.ZAxis);
@@ -120,18 +128,12 @@ public class Script_Instance42 : GH_ScriptInstance
 
         }
 
-        for (int i = 0; i < updateBreps.Length; i++)
-        {
-            updateBreps[i] = Brep.CreateBooleanIntersection(updateBreps[i], brep, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance)[0];
-        }
+        //    for (int i = 0; i < updateBreps.Length; i++) {
+        //      updateBreps[i] = Brep.CreateBooleanIntersection(updateBreps[i], brep, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance)[0];
+        //    }
         A = updateBreps;
 
         #endregion
-
-
-
-
-
 
 
 
@@ -142,21 +144,18 @@ public class Script_Instance42 : GH_ScriptInstance
 
     // <Custom additional code> 
 
-
-    public double map(double number, double low1, double high1, double low2, double high2)
-    {
+    public double map(double number, double low1, double high1, double low2, double high2) {
         return low2 + (high2 - low2) * (number - low1) / (high1 - low1);
     }
-    public class Perlin
-    {
 
-        public static double OctavePerlin(double x, double y, double z, int octaves, double persistence)
-        {
+    public class Perlin {
+
+     
+        public static double OctavePerlin(double x, double y, double z, int octaves, double persistence) {
             double total = 0;
             double frequency = 1;
             double amplitude = 1;
-            for (int i = 0; i < octaves; i++)
-            {
+            for (int i = 0; i < octaves; i++) {
                 total += perlin(x * frequency, y * frequency, z * frequency) * amplitude;
 
                 amplitude *= persistence;
@@ -183,20 +182,16 @@ public class Script_Instance42 : GH_ScriptInstance
 
         private static readonly int[] p;                                                    // Doubled permutation to avoid overflow
 
-        static Perlin()
-        {
+        static Perlin() {
             p = new int[512];
-            for (int x = 0; x < 512; x++)
-            {
+            for (int x = 0; x < 512; x++) {
                 p[x] = permutation[x % 256];
             }
         }
 
-        public static double perlin(double x, double y, double z)
-        {
+        public static double perlin(double x, double y, double z) {
             int repeat = 0;
-            if (repeat > 0)
-            {                                   // If we have any repeat on, change the coordinates to their "local" repetitions
+            if (repeat > 0) {                                   // If we have any repeat on, change the coordinates to their "local" repetitions
                 x = x % repeat;
                 y = y % repeat;
                 z = z % repeat;
@@ -241,8 +236,7 @@ public class Script_Instance42 : GH_ScriptInstance
             return (lerp(y1, y2, w) + 1) / 2;                       // For convenience we bound it to 0 - 1 (theoretical min/max before is -1 - 1)
         }
 
-        public static double grad(int hash, double x, double y, double z)
-        {
+        public static double grad(int hash, double x, double y, double z) {
             int h = hash & 15;                                  // Take the hashed value and take the first 4 bits of it (15 == 0b1111)
             double u = h < 8 /* 0b1000 */ ? x : y;              // If the most signifigant bit (MSB) of the hash is 0 then set u = x.  Otherwise y.
 
@@ -259,20 +253,28 @@ public class Script_Instance42 : GH_ScriptInstance
             return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v); // Use the last 2 bits to decide if u and v are positive or negative.  Then return their addition.
         }
 
-        public static double fade(double t)
-        {
+        public static double fade(double t) {
             // Fade function as defined by Ken Perlin.  This eases coordinate values
             // so that they will "ease" towards integral values.  This ends up smoothing
             // the final output.
             return t * t * t * (t * (t * 6 - 15) + 10);         // 6t^5 - 15t^4 + 10t^3
         }
 
-        public static double lerp(double a, double b, double x)
-        {
+        public static double lerp(double a, double b, double x) {
             return a + x * (b - a);
         }
     }
 
+
+
+    /// <summary>
+    /// This method will be called once every solution, before any calls to RunScript.
+    /// </summary>
+    public override void BeforeRunScript() { }
+    /// <summary>
+    /// This method will be called once every solution, after any calls to RunScript.
+    /// </summary>
+    public override void AfterRunScript() { }
 
     // </Custom additional code> 
 }

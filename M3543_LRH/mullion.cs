@@ -74,9 +74,9 @@ public class Script_Instance : GH_ScriptInstance {
 
 
         double supportOffset = 1.000;
-        double supportOpeningWidth = glazingWidth * 4;
-        double supportOpeningLength = glazingLength * 3;
-        double supportMullionWidth = 0.200;
+        double supportOpeningWidth = glazingWidth * 3;
+        double supportOpeningLength = glazingLength * 4;
+        double supportMullionWidth = 0.300;
         double supportMullionLength = 0.600;
 
 
@@ -108,6 +108,7 @@ public class Script_Instance : GH_ScriptInstance {
 
 
     // <Custom additional code> 
+
     #region customCode
     Curve[] mullions(Brep brep, double width, double length) {
 
