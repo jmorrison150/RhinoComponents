@@ -85,7 +85,7 @@ public class Script_Instance : GH_ScriptInstance
 
         for (int i = 0; i < points.Length; i++)
         {
-            points[i].Z += increment * i;
+            points[i].Z = (increment * i)+ startPt.Z;
         }
 
         Curve c = Curve.CreateInterpolatedCurve(points, 3);
