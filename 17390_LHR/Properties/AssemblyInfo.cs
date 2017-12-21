@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("M3543_LRH")]
+[assembly: AssemblyTitle("17390_LHR")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("M3543_LRH")]
+[assembly: AssemblyProduct("17390_LHR")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("45e4703e-d751-48a4-8f62-e427fdc920ad")]
+[assembly: Guid("1638bb87-e39b-49aa-90da-56bbb9299893")]
 
 // Version information for an assembly consists of the following four values:
 //

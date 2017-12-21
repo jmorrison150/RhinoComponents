@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{45E4703E-D751-48A4-8F62-E427FDC920AD}</ProjectGuid>
+    <ProjectGuid>{1638BB87-E39B-49AA-90DA-56BBB9299893}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>M3543_LRH</RootNamespace>
-    <AssemblyName>M3543_LRH</AssemblyName>
+    <RootNamespace>_17390_LHR</RootNamespace>
+    <AssemblyName>17390_LHR</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="elefront">
+      <HintPath>C:\Users\12372\AppData\Roaming\Grasshopper\Libraries\elefront.dll</HintPath>
+    </Reference>
     <Reference Include="GH_IO">
       <HintPath>C:\Users\12372\AppData\Roaming\McNeel\Rhinoceros\5.0\Plug-ins\Grasshopper {B45A29B1-4343-4035-989E-044E8580D9CF}\0.9.76.0\GH_IO.dll</HintPath>
     </Reference>
@@ -44,6 +47,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -52,12 +56,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="perlinCloudSculpture.cs" />
-    <Compile Include="move.cs" />
-    <Compile Include="mullion.cs" />
+    <Compile Include="diagrid.cs" />
+    <Compile Include="insertBlock.cs" />
+    <Compile Include="pillow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="roadFromPlanarCurve.cs" />
-    <Compile Include="temp.cs" />
+    <Compile Include="scaleBlock.cs" />
+    <Compile Include="sortBlocks.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

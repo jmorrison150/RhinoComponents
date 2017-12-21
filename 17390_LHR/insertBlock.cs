@@ -24,12 +24,22 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 
+using Elefront;
+using Elefront.Component.Annotation;
+using Elefront.Component.Attributes;
+using Elefront.Component.Data;
+using Elefront.Component.Parameter;
+using Elefront.Obsolete;
+using Elefront.Block;
+using Elefront.Component.Reference;
+using Elefront.Properties;
+
+
 
 /// <summary>
 /// This class will be instantiated on demand by the Script component.
 /// </summary>
-public class Script_Instance : GH_ScriptInstance
-{
+public class Script_Instance : GH_ScriptInstance {
     #region Utility functions
     /// <summary>Print a String to the [Out] Parameter of the Script component.</summary>
     /// <param name="text">String to print.</param>
@@ -65,45 +75,18 @@ public class Script_Instance : GH_ScriptInstance
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(List<Curve> roads, Point3d startPt, Point3d endPt, ref object A, ref object B)
-    {
+    private void RunScript(string blockName, Point3d centerPoint, double width, double length, ref object A) {
+
+        InstanceDefinition instanceDef = RhinoDoc.ActiveDoc.InstanceDefinitions.Find(blockName, true);
+        Plane plane = new Plane(centerPoint, Vector3d.ZAxis);
+        ElefrontBlock block = new ElefrontBlock(instanceDef, Transform.PlaneToPlane(Plane.WorldXY, plane));
+        double blockWidth = block.Boundingbox.Max.Y - block.Boundingbox.Min.Y;
+        double blockLength = block.Boundingbox.Max.Z - block.Boundingbox.Min.Z;
+        Transform scale = Transform.Scale(plane, blockLength / length, blockWidth / width, blockLength / length);
 
 
-
-#region beginScript
-        List<Curve> updateCurves = new List<Curve>();
-        List<double> updateSlope = new List<double>();
-
-        for (int j = 0; j < roads.Count; j++)
-        {
-
-
-        Point3d[] points;
-        roads[j].DivideByLength(1.0, true, out points);
-        double height = endPt.Z - startPt.Z;
-        double increment = height / points.Length;
-
-        for (int i = 0; i < points.Length; i++)
-        {
-            points[i].Z = (increment * i)+ startPt.Z;
-        }
-
-        Curve c = Curve.CreateInterpolatedCurve(points, 3);
-            updateCurves.Add(c);
-            double slope = height / c.GetLength();
-            updateSlope.Add(slope);
-        }
-        A = updateCurves;
-        B = updateSlope;
-#endregion
-
-
-
-
-
-
-
-
+        block.Transform(scale);
+        A = block;
     }
 
     // <Custom additional code> 
