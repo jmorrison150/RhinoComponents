@@ -56,6 +56,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="color.cs" />
+    <Compile Include="copy.cs" />
     <Compile Include="diagrid.cs" />
     <Compile Include="insertBlock.cs" />
     <Compile Include="pillow.cs" />
