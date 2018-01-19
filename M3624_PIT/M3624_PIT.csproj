@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1638BB87-E39B-49AA-90DA-56BBB9299893}</ProjectGuid>
+    <ProjectGuid>{5DFE3F47-3C9E-4C48-BEF1-6A6582A4DD3B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>_17390_LHR</RootNamespace>
-    <AssemblyName>17390_LHR</AssemblyName>
+    <RootNamespace>M3624_PIT</RootNamespace>
+    <AssemblyName>M3624_PIT</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,14 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="elefront">
-      <HintPath>C:\Users\12372\AppData\Roaming\Grasshopper\Libraries\elefront.dll</HintPath>
-    </Reference>
     <Reference Include="GH_IO">
       <HintPath>C:\Users\12372\AppData\Roaming\McNeel\Rhinoceros\5.0\Plug-ins\Grasshopper {B45A29B1-4343-4035-989E-044E8580D9CF}\0.9.76.0\GH_IO.dll</HintPath>
-    </Reference>
-    <Reference Include="GH_Util">
-      <HintPath>C:\Users\12372\AppData\Roaming\McNeel\Rhinoceros\5.0\Plug-ins\Grasshopper {B45A29B1-4343-4035-989E-044E8580D9CF}\0.9.76.0\GH_Util.dll</HintPath>
     </Reference>
     <Reference Include="Grasshopper">
       <HintPath>C:\Users\12372\AppData\Roaming\McNeel\Rhinoceros\5.0\Plug-ins\Grasshopper {B45A29B1-4343-4035-989E-044E8580D9CF}\0.9.76.0\Grasshopper.dll</HintPath>
@@ -56,15 +50,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="zheight.cs" />
-    <Compile Include="copy.cs" />
-    <Compile Include="diagrid.cs" />
-    <Compile Include="insertBlock.cs" />
-    <Compile Include="pillow.cs" />
+    <Compile Include="import_las.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="scaleBlock.cs" />
-    <Compile Include="sortBlocks.cs" />
-    <Compile Include="zHeightCurves.cs" />
+    <Compile Include="ptsToMesh.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
