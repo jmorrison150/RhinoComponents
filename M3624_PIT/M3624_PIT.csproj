@@ -50,9 +50,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Edges.cs" />
     <Compile Include="import_las.cs" />
+    <Compile Include="meshBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ptsToMesh.cs" />
+    <Compile Include="wireframeSections.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

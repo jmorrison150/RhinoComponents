@@ -76,6 +76,7 @@
     <Compile Include="intersectBrep.cs" />
     <Compile Include="isPointInside.cs" />
     <Compile Include="map.cs" />
+    <Compile Include="meshBase.cs" />
     <Compile Include="meshToSurface.cs" />
     <Compile Include="mullions.cs" />
     <Compile Include="offsetSrf.cs" />
