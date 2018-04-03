@@ -60,7 +60,6 @@
     <Compile Include="copy.cs" />
     <Compile Include="diagrid.cs" />
     <Compile Include="insertBlock.cs" />
-    <Compile Include="pillow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="scaleBlock.cs" />
     <Compile Include="sortBlocks.cs" />
