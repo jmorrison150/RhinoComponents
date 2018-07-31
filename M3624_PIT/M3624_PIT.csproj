@@ -59,6 +59,8 @@
     <Compile Include="ptsToMesh.cs" />
     <Compile Include="sections.cs" />
     <Compile Include="squarePipe.cs" />
+    <Compile Include="wideFlange.cs" />
+    <Compile Include="wideFlangeTaper.cs" />
     <Compile Include="wireframeSections.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
