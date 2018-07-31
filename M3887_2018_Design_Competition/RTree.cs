@@ -19,7 +19,7 @@ using System.Data;
 using System.Drawing;
 using System.Reflection;
 using System.Collections;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 /// <summary>
 /// This class will be instantiated on demand by the Script component.
 /// </summary>
-public class Script_Instance : GH_ScriptInstance {
+public class Script_Instance68 : GH_ScriptInstance {
     #region Utility functions
     /// <summary>Print a String to the [Out] Parameter of the Script component.</summary>
     /// <param name="text">String to print.</param>
@@ -64,35 +64,35 @@ public class Script_Instance : GH_ScriptInstance {
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Curve rail, Curve profile, List<double> tapers, ref object A) {
+    private void RunScript(List<Line> lineList, double radius, int item, ref object A, ref object B) {
 
+        //create RTree
+        lineList2 = lineList;
+        cl.Clear();
+        ci.Clear();
+        RTree tree = new RTree();
 
-        //Brep[] sweeps = Brep.CreateFromSweep(arch, profile, true, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-        //SweepOneRail sweep1;
-
-        double[] ts = rail.DivideByCount(tapers.Count - 1, true);
-        Plane[] planes = new Plane[ts.Length];
-        Curve[] profiles = new Curve[ts.Length];
-
-        for (int i = 0; i < ts.Length; i++) {
-            rail.PerpendicularFrameAt(ts[i], out planes[i]);
-            //rail.FrameAt(ts[i], out planes[i]);
-            Plane world = Plane.WorldZX;
-            world.Rotate(-90 * Math.PI / 180.0, Vector3d.YAxis); //profile in elevation
-            Transform xform = Transform.PlaneToPlane(world, planes[i]);
-            profiles[i] = profile.DuplicateCurve();
-            profiles[i].Scale(tapers[i]);
-            profiles[i].Transform(xform);
+        // add points to RTree
+        for (int i = 0; i < lineList.Count; i++) {
+            tree.Insert(lineList[i].PointAt(0.5), i);
         }
 
-        Brep[] lofts = Brep.CreateFromLoft(profiles, Point3d.Unset, Point3d.Unset, LoftType.Normal, false);
-
-
-        A = lofts;
+        //search
+        tree.Search(new Sphere(lineList[item].PointAt(0.5), radius), method);
+        A = cl;
+        B = ci;
 
     }
 
     // <Custom additional code> 
 
+    List<Line> cl = new List<Line>();
+    List<int> ci = new List<int>();
+    List<Line> lineList2 = new List<Line>();
+    private void method(object sender, RTreeEventArgs e) {
+        cl.Add(lineList2[e.Id]);
+        ci.Add(e.Id);
+    }
     // </Custom additional code> 
 }
+

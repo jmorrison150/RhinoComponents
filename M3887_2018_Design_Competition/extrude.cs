@@ -19,7 +19,6 @@ using System.Data;
 using System.Drawing;
 using System.Reflection;
 using System.Collections;
-using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
@@ -28,7 +27,7 @@ using System.Runtime.InteropServices;
 /// <summary>
 /// This class will be instantiated on demand by the Script component.
 /// </summary>
-public class Script_Instance : GH_ScriptInstance {
+public class Script_Instance53 : GH_ScriptInstance {
     #region Utility functions
     /// <summary>Print a String to the [Out] Parameter of the Script component.</summary>
     /// <param name="text">String to print.</param>
@@ -64,31 +63,61 @@ public class Script_Instance : GH_ScriptInstance {
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Curve rail, Curve profile, List<double> tapers, ref object A) {
+    private void RunScript(object pointCloud, List<Curve> curves, ref object A) {
 
 
-        //Brep[] sweeps = Brep.CreateFromSweep(arch, profile, true, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-        //SweepOneRail sweep1;
 
-        double[] ts = rail.DivideByCount(tapers.Count - 1, true);
-        Plane[] planes = new Plane[ts.Length];
-        Curve[] profiles = new Curve[ts.Length];
+        #region beginScript
+        List<Surface> updateSurfaces = new List<Surface>();
 
-        for (int i = 0; i < ts.Length; i++) {
-            rail.PerpendicularFrameAt(ts[i], out planes[i]);
-            //rail.FrameAt(ts[i], out planes[i]);
-            Plane world = Plane.WorldZX;
-            world.Rotate(-90 * Math.PI / 180.0, Vector3d.YAxis); //profile in elevation
-            Transform xform = Transform.PlaneToPlane(world, planes[i]);
-            profiles[i] = profile.DuplicateCurve();
-            profiles[i].Scale(tapers[i]);
-            profiles[i].Transform(xform);
+        PointCloud cloud = (PointCloud)pointCloud;
+        Point3d[] cloudPts = cloud.GetPoints();
+
+
+        for (int i = 0; i < curves.Count; i++) {
+            AreaMassProperties areaMass = AreaMassProperties.Compute(curves[i]);
+            Point3d midPoint = areaMass.Centroid;
+
+            bool inside = false;
+            int count = 1;
+            Point3d closestPoint = Point3d.Unset;
+
+
+
+            //Surface extrusion = Extrusion.Create()
+
+
+            while (!inside || count < 100) {
+
+                double radius = count * 0.1;
+                Circle baseCircle = new Circle(midPoint, radius);
+                Cylinder cylinder = new Cylinder(baseCircle, 10000000);
+                Brep b = cylinder.ToBrep(true, true);
+
+
+                for (int j = 0; j < cloudPts.Length; j++) {
+                    inside = b.IsPointInside(cloudPts[j], RhinoDoc.ActiveDoc.ModelAbsoluteTolerance, false);
+                    if (inside) {
+                        closestPoint = cloudPts[j];
+                        break;
+                    }
+                }
+
+                count++;
+            }
+
+            double buildingHeight = closestPoint.Z - midPoint.Z;
+
+            Surface s = Extrusion.CreateExtrusion(curves[i], Vector3d.ZAxis * buildingHeight);
+            updateSurfaces.Add(s);
+
+
+
         }
 
-        Brep[] lofts = Brep.CreateFromLoft(profiles, Point3d.Unset, Point3d.Unset, LoftType.Normal, false);
+        A = updateSurfaces;
+        #endregion
 
-
-        A = lofts;
 
     }
 

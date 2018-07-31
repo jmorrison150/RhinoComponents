@@ -64,31 +64,56 @@ public class Script_Instance : GH_ScriptInstance {
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Curve rail, Curve profile, List<double> tapers, ref object A) {
+    private void RunScript(List<GeometryBase> iterations, List<GeometryBase> other, ref object A) {
 
 
-        //Brep[] sweeps = Brep.CreateFromSweep(arch, profile, true, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-        //SweepOneRail sweep1;
+        #region beginScript
+        int count = 10;
 
-        double[] ts = rail.DivideByCount(tapers.Count - 1, true);
-        Plane[] planes = new Plane[ts.Length];
-        Curve[] profiles = new Curve[ts.Length];
+        List<GeometryBase> updateIterations = iterations;
+        List<GeometryBase> updateOther = new List<GeometryBase>();
 
-        for (int i = 0; i < ts.Length; i++) {
-            rail.PerpendicularFrameAt(ts[i], out planes[i]);
-            //rail.FrameAt(ts[i], out planes[i]);
-            Plane world = Plane.WorldZX;
-            world.Rotate(-90 * Math.PI / 180.0, Vector3d.YAxis); //profile in elevation
-            Transform xform = Transform.PlaneToPlane(world, planes[i]);
-            profiles[i] = profile.DuplicateCurve();
-            profiles[i].Scale(tapers[i]);
-            profiles[i].Transform(xform);
+        BoundingBox bb = BoundingBox.Unset;
+
+        for (int i = 0; i < updateIterations.Count; i++) {
+            bb.Union(updateIterations[i].GetBoundingBox(false));
+
+        }
+        for (int i = 0; i < other.Count; i++) {
+            bb.Union(other[i].GetBoundingBox(false));
         }
 
-        Brep[] lofts = Brep.CreateFromLoft(profiles, Point3d.Unset, Point3d.Unset, LoftType.Normal, false);
+
+        double moveX = bb.Max.X - bb.Min.X;
+        double moveY = bb.Max.Y - bb.Min.Y;
 
 
-        A = lofts;
+        for (int i = 0; i < count; i++) {
+            for (int j = 0; j < count; j++) {
+                Transform xform = Transform.Translation(moveX * count*i, moveY * count * j, 0.0);
+                updateIterations[(i * count) + j].Transform(xform);
+
+            }
+        }
+
+        for (int k = 0; k < other.Count; k++) {
+
+            for (int i = 0; i < count; i++) {
+                for (int j = 0; j < count; j++) {
+                    Transform xform = Transform.Translation(moveX * count * i, moveY * count * j, 0.0);
+                    GeometryBase dup = other[k].Duplicate();
+                    dup.Transform(xform);
+                    other.Add(dup);
+
+                }
+            }
+        }
+
+        A = updateIterations;
+        B = updateOther;
+#endregion
+
+
 
     }
 

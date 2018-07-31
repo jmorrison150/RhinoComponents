@@ -64,31 +64,33 @@ public class Script_Instance : GH_ScriptInstance {
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Curve rail, Curve profile, List<double> tapers, ref object A) {
+    private void RunScript(Brep brep, object y, ref object A) {
+
+        List<Brep> faces = new List<Brep>();
+
+        for (int i = 0; i < brep.Faces.Count; i++) {
+            BrepFace face = brep.Faces[i];
+                face.ShrinkFace(BrepFace.ShrinkDisableSide.ShrinkAllSides);
+            double u = face.Domain(0).Mid;
+            double v = face.Domain(1).Mid;
 
 
-        //Brep[] sweeps = Brep.CreateFromSweep(arch, profile, true, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-        //SweepOneRail sweep1;
+            Vector3d normal = face.NormalAt(u, v);
+            if (normal.IsParallelTo(Vector3d.ZAxis)<1) {
 
-        double[] ts = rail.DivideByCount(tapers.Count - 1, true);
-        Plane[] planes = new Plane[ts.Length];
-        Curve[] profiles = new Curve[ts.Length];
-
-        for (int i = 0; i < ts.Length; i++) {
-            rail.PerpendicularFrameAt(ts[i], out planes[i]);
-            //rail.FrameAt(ts[i], out planes[i]);
-            Plane world = Plane.WorldZX;
-            world.Rotate(-90 * Math.PI / 180.0, Vector3d.YAxis); //profile in elevation
-            Transform xform = Transform.PlaneToPlane(world, planes[i]);
-            profiles[i] = profile.DuplicateCurve();
-            profiles[i].Scale(tapers[i]);
-            profiles[i].Transform(xform);
+                faces.Add(face.ToBrep());
+            }
         }
 
-        Brep[] lofts = Brep.CreateFromLoft(profiles, Point3d.Unset, Point3d.Unset, LoftType.Normal, false);
+        A = faces;
 
 
-        A = lofts;
+
+
+
+
+
+
 
     }
 

@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 /// <summary>
 /// This class will be instantiated on demand by the Script component.
 /// </summary>
-public class Script_Instance : GH_ScriptInstance {
+public class Script_Instance59 : GH_ScriptInstance {
     #region Utility functions
     /// <summary>Print a String to the [Out] Parameter of the Script component.</summary>
     /// <param name="text">String to print.</param>
@@ -64,31 +64,51 @@ public class Script_Instance : GH_ScriptInstance {
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Curve rail, Curve profile, List<double> tapers, ref object A) {
+    private void RunScript(Brep brep, ref object A, ref object B) {
 
 
-        //Brep[] sweeps = Brep.CreateFromSweep(arch, profile, true, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-        //SweepOneRail sweep1;
+        Mesh updateMesh = new Mesh();
+        List<Polyline> updatePolylines = new List<Polyline>();
 
-        double[] ts = rail.DivideByCount(tapers.Count - 1, true);
-        Plane[] planes = new Plane[ts.Length];
-        Curve[] profiles = new Curve[ts.Length];
 
-        for (int i = 0; i < ts.Length; i++) {
-            rail.PerpendicularFrameAt(ts[i], out planes[i]);
-            //rail.FrameAt(ts[i], out planes[i]);
-            Plane world = Plane.WorldZX;
-            world.Rotate(-90 * Math.PI / 180.0, Vector3d.YAxis); //profile in elevation
-            Transform xform = Transform.PlaneToPlane(world, planes[i]);
-            profiles[i] = profile.DuplicateCurve();
-            profiles[i].Scale(tapers[i]);
-            profiles[i].Transform(xform);
+
+      
+        for (int i = 0; i < brep.Faces.Count; i++) {
+
+            BrepFace face = brep.Faces[i];
+            Polyline polyline = new Polyline();
+            NurbsCurve outerLoop = brep.Faces[i].OuterLoop.To3dCurve().ToNurbsCurve();
+            for (int j = 0; j < outerLoop.Points.Count; j++) {
+                polyline.Add(outerLoop.Points[j].Location);
+            }
+            //polyline.ReduceSegments(RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
+            updatePolylines.Add(polyline);
+
+
+            Mesh m = new Mesh();
+            m.Vertices.AddVertices(polyline);
+
+            for (int j = 0; j < m.Vertices.Count; j+=4) {
+
+            }
+            if (polyline.Count >= 4) {
+
+                m.Faces.AddFace(0, 1, 2, 3);
+            } else {
+                m.Faces.AddFace(0, 1, 2);
+            }
+            updateMesh.Append(m);
+
         }
 
-        Brep[] lofts = Brep.CreateFromLoft(profiles, Point3d.Unset, Point3d.Unset, LoftType.Normal, false);
+        updateMesh.Normals.ComputeNormals();
+        updateMesh.UnifyNormals();
+
+        A = updateMesh;
+        B = updatePolylines;
 
 
-        A = lofts;
+
 
     }
 

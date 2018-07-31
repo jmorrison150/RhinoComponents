@@ -66,6 +66,7 @@
     <Compile Include="export.cs" />
     <Compile Include="fade.cs" />
     <Compile Include="floors.cs" />
+    <Compile Include="gradientHoles.cs" />
     <Compile Include="headHeight.cs" />
     <Compile Include="glazing_extrudeZ.cs" />
     <Compile Include="heightMap.cs" />
@@ -85,6 +86,7 @@
     <Compile Include="pointsToCSV.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ptToSrf.cs" />
+    <Compile Include="rad.cs" />
     <Compile Include="random.cs" />
     <Compile Include="panelRotate.cs" />
     <Compile Include="rotate3d.cs" />
@@ -96,6 +98,7 @@
     <Compile Include="subdivideSurface.cs" />
     <Compile Include="sweepTaper.cs" />
     <Compile Include="sweepYZ.cs" />
+    <Compile Include="topoSection.cs" />
     <Compile Include="tree.cs" />
     <Compile Include="trimCurve.cs" />
     <Compile Include="truss.cs" />

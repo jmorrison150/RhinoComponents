@@ -64,32 +64,27 @@ public class Script_Instance : GH_ScriptInstance {
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Curve rail, Curve profile, List<double> tapers, ref object A) {
+    private void RunScript(List<Surface> x, ref object outCurves, ref object outPoints) {
+        List<Curve> curves = new List<Curve>();
+        List<Point3d> points = new List<Point3d>();
 
+        for (int i = 0; i < x.Count; i++) {
+            for (int j = i + 1; j < x.Count; j++) {
+                Curve[] crvs;
+                Point3d[] pts;
+                Rhino.Geometry.Intersect.Intersection.SurfaceSurface(x[i], x[j], 0.001, out crvs, out pts);
+                for (int k = 0; k < crvs.Length; k++) {
+                    curves.Add(crvs[k]);
+                }
+                for (int k = 0; k < pts.Length; k++) {
+                    points.Add(pts[k]);
+                }
 
-        //Brep[] sweeps = Brep.CreateFromSweep(arch, profile, true, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-        //SweepOneRail sweep1;
-
-        double[] ts = rail.DivideByCount(tapers.Count - 1, true);
-        Plane[] planes = new Plane[ts.Length];
-        Curve[] profiles = new Curve[ts.Length];
-
-        for (int i = 0; i < ts.Length; i++) {
-            rail.PerpendicularFrameAt(ts[i], out planes[i]);
-            //rail.FrameAt(ts[i], out planes[i]);
-            Plane world = Plane.WorldZX;
-            world.Rotate(-90 * Math.PI / 180.0, Vector3d.YAxis); //profile in elevation
-            Transform xform = Transform.PlaneToPlane(world, planes[i]);
-            profiles[i] = profile.DuplicateCurve();
-            profiles[i].Scale(tapers[i]);
-            profiles[i].Transform(xform);
+            }
         }
 
-        Brep[] lofts = Brep.CreateFromLoft(profiles, Point3d.Unset, Point3d.Unset, LoftType.Normal, false);
-
-
-        A = lofts;
-
+        outCurves = curves;
+        outPoints = points;
     }
 
     // <Custom additional code> 

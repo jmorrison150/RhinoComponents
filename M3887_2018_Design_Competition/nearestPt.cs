@@ -64,31 +64,100 @@ public class Script_Instance : GH_ScriptInstance {
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Curve rail, Curve profile, List<double> tapers, ref object A) {
+    private void RunScript(List<Point3d> pts, ref object A) {
 
 
-        //Brep[] sweeps = Brep.CreateFromSweep(arch, profile, true, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-        //SweepOneRail sweep1;
 
-        double[] ts = rail.DivideByCount(tapers.Count - 1, true);
-        Plane[] planes = new Plane[ts.Length];
-        Curve[] profiles = new Curve[ts.Length];
 
-        for (int i = 0; i < ts.Length; i++) {
-            rail.PerpendicularFrameAt(ts[i], out planes[i]);
-            //rail.FrameAt(ts[i], out planes[i]);
-            Plane world = Plane.WorldZX;
-            world.Rotate(-90 * Math.PI / 180.0, Vector3d.YAxis); //profile in elevation
-            Transform xform = Transform.PlaneToPlane(world, planes[i]);
-            profiles[i] = profile.DuplicateCurve();
-            profiles[i].Scale(tapers[i]);
-            profiles[i].Transform(xform);
+
+
+
+
+
+
+        #region beginScript
+        //Line[] lines = new Line[pts.Count];
+        List<Line> updateLines = new List<Line>();
+
+        //PointCloud cloud = new PointCloud(pts);
+
+
+        for (int i = 0; i < pts.Count; i++) {
+
+
+
+            //int index = cloud.ClosestPoint(pts[i]);
+            //Point3d pt = cloud[index].Location;
+
+
+            double dist0 = double.MaxValue;
+            double dist1 = double.MaxValue;
+            double dist2 = double.MaxValue;
+
+            int index0 = -1;
+            int index1 = -1;
+            int index2 = -1;
+
+            for (int j = 0; j < pts.Count; j++) {
+                if (i == j) continue;
+                double d = pts[i].DistanceToSquared(pts[j]);
+
+
+                if (d < dist0) {
+                    if (dist0 < dist1) {
+                        if (dist1 < dist2) {
+                            dist2 = dist1; index2 = index1;
+                        }
+                        dist1 = dist0; index1 = index0;
+                    }
+                    dist0 = d; index0 = j; continue;
+
+
+                } else if (d < dist1) {
+                    if (dist1 < dist2) {
+                        dist2 = dist1; index2 = index1;
+                    }
+                    dist1 = d; index1 = j; continue;
+                } else if (d < dist2) {
+                    dist2 = d; index2 = j; continue;
+                }
+
+            }
+
+            if (index0>=0) {
+
+            Line l = new Line(pts[i], pts[index0]);
+                updateLines.Add(l);
+            }
+            if (index1 >= 0) {
+
+                Line l = new Line(pts[i], pts[index1]);
+                updateLines.Add(l);
+            }
+            if (index2 >= 0) {
+
+                Line l = new Line(pts[i], pts[index2]);
+                updateLines.Add(l);
+            }
+
+
+
+
         }
 
-        Brep[] lofts = Brep.CreateFromLoft(profiles, Point3d.Unset, Point3d.Unset, LoftType.Normal, false);
+
+        A = updateLines;
+
+        #endregion
 
 
-        A = lofts;
+
+
+
+
+
+
+
 
     }
 

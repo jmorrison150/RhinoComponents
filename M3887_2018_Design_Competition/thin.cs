@@ -64,31 +64,36 @@ public class Script_Instance : GH_ScriptInstance {
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Curve rail, Curve profile, List<double> tapers, ref object A) {
+    private void RunScript(List<Point3d> points, double distance, ref object A) {
 
+        Point3d[] inputPoint = new Point3d[1];
+        inputPoint[0] = points[0];
+        PointCloud cloud = new PointCloud(inputPoint);
 
-        //Brep[] sweeps = Brep.CreateFromSweep(arch, profile, true, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-        //SweepOneRail sweep1;
-
-        double[] ts = rail.DivideByCount(tapers.Count - 1, true);
-        Plane[] planes = new Plane[ts.Length];
-        Curve[] profiles = new Curve[ts.Length];
-
-        for (int i = 0; i < ts.Length; i++) {
-            rail.PerpendicularFrameAt(ts[i], out planes[i]);
-            //rail.FrameAt(ts[i], out planes[i]);
-            Plane world = Plane.WorldZX;
-            world.Rotate(-90 * Math.PI / 180.0, Vector3d.YAxis); //profile in elevation
-            Transform xform = Transform.PlaneToPlane(world, planes[i]);
-            profiles[i] = profile.DuplicateCurve();
-            profiles[i].Scale(tapers[i]);
-            profiles[i].Transform(xform);
+        for (int i = 0; i < points.Count; i++) {
+            int index = cloud.ClosestPoint(points[i]);
+            Point3d pt = cloud.PointAt(index);
+            double dist = pt.DistanceTo(points[i]);
+            if (dist>distance) {
+                cloud.Add(points[i]);
+            }
         }
 
-        Brep[] lofts = Brep.CreateFromLoft(profiles, Point3d.Unset, Point3d.Unset, LoftType.Normal, false);
 
 
-        A = lofts;
+        A = cloud.GetPoints();
+
+
+
+
+
+
+
+
+
+
+
+
 
     }
 

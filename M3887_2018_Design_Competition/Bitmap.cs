@@ -19,7 +19,7 @@ using System.Data;
 using System.Drawing;
 using System.Reflection;
 using System.Collections;
-using System.Windows.Forms;
+//using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 /// <summary>
 /// This class will be instantiated on demand by the Script component.
 /// </summary>
-public class Script_Instance : GH_ScriptInstance {
+public class Script_Instance69 : GH_ScriptInstance {
     #region Utility functions
     /// <summary>Print a String to the [Out] Parameter of the Script component.</summary>
     /// <param name="text">String to print.</param>
@@ -64,35 +64,45 @@ public class Script_Instance : GH_ScriptInstance {
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Curve rail, Curve profile, List<double> tapers, ref object A) {
+    private void RunScript(string path, double scale, ref object A) {
 
 
-        //Brep[] sweeps = Brep.CreateFromSweep(arch, profile, true, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-        //SweepOneRail sweep1;
+        int resampleSize = 200;
 
-        double[] ts = rail.DivideByCount(tapers.Count - 1, true);
-        Plane[] planes = new Plane[ts.Length];
-        Curve[] profiles = new Curve[ts.Length];
+        if (!System.IO.File.Exists(path))
+            throw new ArgumentException("File does not exist");
+        //Load bitmap file
+        Bitmap bitmap = new Bitmap(path);
+        //resize to 200x200 pixels
+        bitmap = new Bitmap(bitmap, resampleSize, resampleSize);
+        //create mesh
+        int nx = bitmap.Width - 1;
+        int ny = bitmap.Height - 1;
+        Interval dx = new Interval(0, resampleSize);
+        Interval dy = new Interval(0, resampleSize);
 
-        for (int i = 0; i < ts.Length; i++) {
-            rail.PerpendicularFrameAt(ts[i], out planes[i]);
-            //rail.FrameAt(ts[i], out planes[i]);
-            Plane world = Plane.WorldZX;
-            world.Rotate(-90 * Math.PI / 180.0, Vector3d.YAxis); //profile in elevation
-            Transform xform = Transform.PlaneToPlane(world, planes[i]);
-            profiles[i] = profile.DuplicateCurve();
-            profiles[i].Scale(tapers[i]);
-            profiles[i].Transform(xform);
+        Mesh mesh = Mesh.CreateFromPlane(Plane.WorldXY, dx, dy, resampleSize, resampleSize);
+
+        Color[] colours = new Color[mesh.Vertices.Count];
+        for (int i = 0; i < mesh.Vertices.Count; i++) {
+            Point3f vertex = mesh.Vertices[i];
+            int x = (int)vertex.X;
+            int y = (int)vertex.Y;
+            colours[i] = bitmap.GetPixel(x, y);
+            mesh.Vertices.SetVertex(i, vertex.X, vertex.Y, -colours[i].B * scale);
         }
+        mesh.VertexColors.SetColors(colours);
+        A = mesh;
 
-        Brep[] lofts = Brep.CreateFromLoft(profiles, Point3d.Unset, Point3d.Unset, LoftType.Normal, false);
 
-
-        A = lofts;
 
     }
 
     // <Custom additional code> 
 
+
+}
     // </Custom additional code> 
 }
+
+

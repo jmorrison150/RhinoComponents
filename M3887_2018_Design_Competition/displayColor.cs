@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 /// <summary>
 /// This class will be instantiated on demand by the Script component.
 /// </summary>
-public class Script_Instance : GH_ScriptInstance {
+public class Script_Instance62 : GH_ScriptInstance {
     #region Utility functions
     /// <summary>Print a String to the [Out] Parameter of the Script component.</summary>
     /// <param name="text">String to print.</param>
@@ -64,35 +64,73 @@ public class Script_Instance : GH_ScriptInstance {
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Curve rail, Curve profile, List<double> tapers, ref object A) {
+    private void RunScript(DataTree<Curve> x, DataTree<Color> y, ref object A) {
+
+        #region beginScript
+        pnts = new List<Point3d>();
+        crvs = new List<Curve>();
+        breps = new List<Brep>();
+        colors = new List<Color>();
+
+        for (int i = 0; i < x.BranchCount; i++) {
+            for (int j = 0; j < x.Branch(i).Count; j++) {
+                crvs.Add(x.Branch(i)[j]);
+                colors.Add(y.Branch(i)[j]);
 
 
-        //Brep[] sweeps = Brep.CreateFromSweep(arch, profile, true, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-        //SweepOneRail sweep1;
-
-        double[] ts = rail.DivideByCount(tapers.Count - 1, true);
-        Plane[] planes = new Plane[ts.Length];
-        Curve[] profiles = new Curve[ts.Length];
-
-        for (int i = 0; i < ts.Length; i++) {
-            rail.PerpendicularFrameAt(ts[i], out planes[i]);
-            //rail.FrameAt(ts[i], out planes[i]);
-            Plane world = Plane.WorldZX;
-            world.Rotate(-90 * Math.PI / 180.0, Vector3d.YAxis); //profile in elevation
-            Transform xform = Transform.PlaneToPlane(world, planes[i]);
-            profiles[i] = profile.DuplicateCurve();
-            profiles[i].Scale(tapers[i]);
-            profiles[i].Transform(xform);
+            }
         }
 
-        Brep[] lofts = Brep.CreateFromLoft(profiles, Point3d.Unset, Point3d.Unset, LoftType.Normal, false);
+
+        #endregion
 
 
-        A = lofts;
+
 
     }
 
     // <Custom additional code> 
+
+
+
+
+
+    #region customCode
+    List<Point3d> pnts;
+    List<Curve> crvs;
+    List<Brep> breps;
+    List<Color> colors;
+    //string NAME;
+    //Point3d LOCATION;
+
+
+
+    int THICKNESS = 2;
+    //Color COL;
+
+    //Draw all wires and points in this method.
+    public override void DrawViewportWires(IGH_PreviewArgs args) {
+        //foreach (Point3d p in pnts)
+        //    args.Display.DrawPoint(p, Rhino.Display.PointStyle.ControlPoint, THICKNESS, COL);
+
+        for (int i = 0; i < crvs.Count; i++) {
+            args.Display.DrawCurve(crvs[i], colors[i], THICKNESS);
+        }
+
+        //foreach (PolyCurve c in crvs)
+        //    args.Display.DrawCurve(c, COL, THICKNESS);
+
+        //foreach (Brep b in breps)
+        //    args.Display.DrawBrepShaded(b, new Rhino.Display.DisplayMaterial(COL));
+
+        //args.Display.DrawPoint(LOCATION, Rhino.Display.PointStyle.ActivePoint, 3, Color.Black);
+        //args.Display.Draw3dText(NAME, Color.Gray, new Plane(LOCATION, Vector3d.ZAxis), THICKNESS / 3, "Arial");
+    }
+    #endregion
+
+
+
+
 
     // </Custom additional code> 
 }

@@ -64,31 +64,52 @@ public class Script_Instance : GH_ScriptInstance {
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Curve rail, Curve profile, List<double> tapers, ref object A) {
+    private void RunScript(Line rail, List<Point3d> terminal, ref object A) {
 
 
-        //Brep[] sweeps = Brep.CreateFromSweep(arch, profile, true, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-        //SweepOneRail sweep1;
 
-        double[] ts = rail.DivideByCount(tapers.Count - 1, true);
-        Plane[] planes = new Plane[ts.Length];
-        Curve[] profiles = new Curve[ts.Length];
 
-        for (int i = 0; i < ts.Length; i++) {
-            rail.PerpendicularFrameAt(ts[i], out planes[i]);
-            //rail.FrameAt(ts[i], out planes[i]);
-            Plane world = Plane.WorldZX;
-            world.Rotate(-90 * Math.PI / 180.0, Vector3d.YAxis); //profile in elevation
-            Transform xform = Transform.PlaneToPlane(world, planes[i]);
-            profiles[i] = profile.DuplicateCurve();
-            profiles[i].Scale(tapers[i]);
-            profiles[i].Transform(xform);
+
+
+
+
+
+
+
+
+
+
+        #region beginScript
+        Curve[] updateCrvs = new Curve[terminal.Count];
+        LineCurve railCurve = new LineCurve(rail);
+        LineCurve railCurve0 = new LineCurve(rail.From, rail.PointAtLength(1.0));
+
+
+        for (int i = 0; i < terminal.Count; i++) {
+
+            LineCurve l = new LineCurve(terminal[i], rail.To);
+
+            Point3d pt0 = l.PointAtLength(1.0);
+
+            LineCurve l0 = new LineCurve(pt0, terminal[i]);
+            Curve c = Curve.CreateBlendCurve(railCurve0, l0, BlendContinuity.Curvature);
+
+
+            updateCrvs[i] = c;
+
+
         }
 
-        Brep[] lofts = Brep.CreateFromLoft(profiles, Point3d.Unset, Point3d.Unset, LoftType.Normal, false);
+        A = updateCrvs;
+        #endregion
 
 
-        A = lofts;
+
+
+
+
+
+
 
     }
 

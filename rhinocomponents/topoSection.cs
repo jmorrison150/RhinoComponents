@@ -64,31 +64,46 @@ public class Script_Instance : GH_ScriptInstance {
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Curve rail, Curve profile, List<double> tapers, ref object A) {
+    private void RunScript(List<Curve> contours, Line sectionCut, ref object A) {
 
 
-        //Brep[] sweeps = Brep.CreateFromSweep(arch, profile, true, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-        //SweepOneRail sweep1;
+        Plane plane = new Plane(sectionCut.From, sectionCut.To, sectionCut.From + Vector3d.ZAxis);
 
-        double[] ts = rail.DivideByCount(tapers.Count - 1, true);
-        Plane[] planes = new Plane[ts.Length];
-        Curve[] profiles = new Curve[ts.Length];
+        List<Point3d> points = new List<Point3d>();
 
-        for (int i = 0; i < ts.Length; i++) {
-            rail.PerpendicularFrameAt(ts[i], out planes[i]);
-            //rail.FrameAt(ts[i], out planes[i]);
-            Plane world = Plane.WorldZX;
-            world.Rotate(-90 * Math.PI / 180.0, Vector3d.YAxis); //profile in elevation
-            Transform xform = Transform.PlaneToPlane(world, planes[i]);
-            profiles[i] = profile.DuplicateCurve();
-            profiles[i].Scale(tapers[i]);
-            profiles[i].Transform(xform);
+        for (int i = 0; i < contours.Count; i++) {
+
+            Rhino.Geometry.Intersect.CurveIntersections intersections = Rhino.Geometry.Intersect.Intersection.CurvePlane(contours[i], plane, Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
+
+            if (intersections!=null) {
+
+            for (int j = 0; j < intersections.Count; j++) {
+                points.Add(intersections[j].PointA);
+            }
+
+            }
+
+
+
         }
+        Point3d[] pts = points.ToArray();
 
-        Brep[] lofts = Brep.CreateFromLoft(profiles, Point3d.Unset, Point3d.Unset, LoftType.Normal, false);
+
+        Array.Sort(pts, delegate (Point3d pt1, Point3d pt2) { return pt1.X.CompareTo(pt2.X); });
+
+        Polyline pl = new Polyline(pts);
+
+        A = pl;
 
 
-        A = lofts;
+
+
+
+
+
+
+
+
 
     }
 

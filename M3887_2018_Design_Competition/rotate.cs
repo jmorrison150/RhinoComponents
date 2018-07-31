@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 /// <summary>
 /// This class will be instantiated on demand by the Script component.
 /// </summary>
-public class Script_Instance : GH_ScriptInstance {
+public class Script_Instance56 : GH_ScriptInstance {
     #region Utility functions
     /// <summary>Print a String to the [Out] Parameter of the Script component.</summary>
     /// <param name="text">String to print.</param>
@@ -64,35 +64,37 @@ public class Script_Instance : GH_ScriptInstance {
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Curve rail, Curve profile, List<double> tapers, ref object A) {
+    private void RunScript(Curve curve, object y, ref object A) {
 
+        List<Curve> crvs = new List<Curve>();
+        int count = 3;
 
-        //Brep[] sweeps = Brep.CreateFromSweep(arch, profile, true, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-        //SweepOneRail sweep1;
+        for (int i = 0; i < count-1; i++) {
+            Curve c = curve.DuplicateCurve();
+            Transform xform = Transform.Rotation(rad((360/count) * (i + 1)), Point3d.Origin);
+            Transform move = Transform.Translation(Vector3d.ZAxis * 120);
+            c.Transform(xform);
+            c.Transform(move);
+            crvs.Add(c);
 
-        double[] ts = rail.DivideByCount(tapers.Count - 1, true);
-        Plane[] planes = new Plane[ts.Length];
-        Curve[] profiles = new Curve[ts.Length];
-
-        for (int i = 0; i < ts.Length; i++) {
-            rail.PerpendicularFrameAt(ts[i], out planes[i]);
-            //rail.FrameAt(ts[i], out planes[i]);
-            Plane world = Plane.WorldZX;
-            world.Rotate(-90 * Math.PI / 180.0, Vector3d.YAxis); //profile in elevation
-            Transform xform = Transform.PlaneToPlane(world, planes[i]);
-            profiles[i] = profile.DuplicateCurve();
-            profiles[i].Scale(tapers[i]);
-            profiles[i].Transform(xform);
         }
+        A = crvs;
 
-        Brep[] lofts = Brep.CreateFromLoft(profiles, Point3d.Unset, Point3d.Unset, LoftType.Normal, false);
 
 
-        A = lofts;
+
+
+
+
+
+
 
     }
 
     // <Custom additional code> 
+    double rad(double degree) {
 
+        return degree * Math.PI / 180.0;
+    }
     // </Custom additional code> 
 }

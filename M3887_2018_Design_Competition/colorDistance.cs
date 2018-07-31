@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 /// <summary>
 /// This class will be instantiated on demand by the Script component.
 /// </summary>
-public class Script_Instance : GH_ScriptInstance {
+public class Script_Instance60 : GH_ScriptInstance {
     #region Utility functions
     /// <summary>Print a String to the [Out] Parameter of the Script component.</summary>
     /// <param name="text">String to print.</param>
@@ -64,35 +64,60 @@ public class Script_Instance : GH_ScriptInstance {
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Curve rail, Curve profile, List<double> tapers, ref object A) {
+    private void RunScript(DataTree<double> list, ref object A) {
+
+        DataTree<Color> colorTree = new DataTree<Color>();
 
 
-        //Brep[] sweeps = Brep.CreateFromSweep(arch, profile, true, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-        //SweepOneRail sweep1;
+        double max = double.MinValue;
+        double min = double.MaxValue;
 
-        double[] ts = rail.DivideByCount(tapers.Count - 1, true);
-        Plane[] planes = new Plane[ts.Length];
-        Curve[] profiles = new Curve[ts.Length];
 
-        for (int i = 0; i < ts.Length; i++) {
-            rail.PerpendicularFrameAt(ts[i], out planes[i]);
-            //rail.FrameAt(ts[i], out planes[i]);
-            Plane world = Plane.WorldZX;
-            world.Rotate(-90 * Math.PI / 180.0, Vector3d.YAxis); //profile in elevation
-            Transform xform = Transform.PlaneToPlane(world, planes[i]);
-            profiles[i] = profile.DuplicateCurve();
-            profiles[i].Scale(tapers[i]);
-            profiles[i].Transform(xform);
+        for (int j = 0; j < list.BranchCount; j++) {
+            double currentMax= list.Branch(j).Max();
+            double currentMin = list.Branch(j).Min();
+
+            if (currentMax>max) {
+                max = currentMax;
+            }
+            if (currentMin<min) {
+                min = currentMin;
+            }
+
         }
 
-        Brep[] lofts = Brep.CreateFromLoft(profiles, Point3d.Unset, Point3d.Unset, LoftType.Normal, false);
 
 
-        A = lofts;
+        for (int j = 0; j < list.BranchCount; j++) {
+
+            GH_Path path = list.Path(j);
+            int[] values = new int[list.Branch(j).Count];
+            System.Drawing.Color[] colors = new System.Drawing.Color[list.Branch(j).Count];
+
+            for (int i = 0; i < values.Length; i++) {
+                values[i] = (int)map(list.Branch(j)[i], min, max, 0, 255);
+
+                colors[i] = System.Drawing.Color.FromArgb(values[i], 255 - values[i], 0);
+
+                colorTree.Add(colors[i], path);
+            }
+
+
+        }
+
+        A = colorTree;
+
+        //A = colors.ToList();
 
     }
 
     // <Custom additional code> 
+    public double map(double number, double low1, double high1, double low2, double high2) {
+        return low2 + (high2 - low2) * (number - low1) / (high1 - low1);
+    }
+    double rad(double degree) {
 
+        return degree * Math.PI / 180.0;
+    }
     // </Custom additional code> 
 }

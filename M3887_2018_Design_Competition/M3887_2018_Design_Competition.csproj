@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8235CD29-9AB2-4086-B043-0B50D1D7F117}</ProjectGuid>
+    <ProjectGuid>{7314D837-4363-4C90-9525-F48F195ADC36}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>_2087_Rome</RootNamespace>
-    <AssemblyName>2087_Rome</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <RootNamespace>M3887_2018_Design_Competition</RootNamespace>
+    <AssemblyName>M3887_2018_Design_Competition</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -39,51 +39,64 @@
     <Reference Include="Grasshopper">
       <HintPath>C:\Program Files\Rhino 6\Plug-ins\Grasshopper\Grasshopper.dll</HintPath>
     </Reference>
+    <Reference Include="Kangaroo0099">
+      <HintPath>C:\Users\12372\AppData\Roaming\Grasshopper\Libraries\Kangaroo0099.dll</HintPath>
+    </Reference>
+    <Reference Include="KangarooSolver">
+      <HintPath>C:\Users\12372\AppData\Roaming\Grasshopper\Libraries\KangarooSolver.dll</HintPath>
+    </Reference>
+    <Reference Include="Plankton">
+      <HintPath>C:\Users\12372\AppData\Roaming\Grasshopper\Libraries\Plankton.dll</HintPath>
+    </Reference>
+    <Reference Include="PlanktonGh">
+      <HintPath>C:\Users\12372\AppData\Roaming\Grasshopper\Libraries\PlanktonGh.dll</HintPath>
+    </Reference>
     <Reference Include="RhinoCommon">
-      <HintPath>C:\Program Files\Rhinoceros 5.0\System\RhinoCommon.dll</HintPath>
+      <HintPath>C:\Program Files\Rhino 6\System\RhinoCommon.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="TSplines">
-      <HintPath>..\..\..\..\..\Users\JM\Desktop\TSplinesGH\TSplines.exe</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="bake.cs" />
-    <Compile Include="ceiling_02.cs" />
-    <Compile Include="Class1.cs" />
-    <Compile Include="connect_lines.cs" />
+    <Compile Include="Bitmap.cs" />
+    <Compile Include="brepVertex.cs" />
+    <Compile Include="colorDistance.cs" />
+    <Compile Include="completeGraph.cs" />
+    <Compile Include="attractor.cs" />
+    <Compile Include="count.cs" />
+    <Compile Include="isVertical.cs" />
+    <Compile Include="processing.cs" />
+    <Compile Include="RTree.cs" />
+    <Compile Include="traffic.cs" />
+    <Compile Include="displayColor.cs" />
     <Compile Include="extrude.cs" />
-    <Compile Include="extrudeToPoint.cs" />
-    <Compile Include="incrementalSave.cs" />
-    <Compile Include="meshDisplay1.cs" />
-    <Compile Include="Parallel.For.cs" />
+    <Compile Include="intersect.cs" />
+    <Compile Include="matrixSlider.cs" />
+    <Compile Include="matrixMove.cs" />
+    <Compile Include="meshPipe.cs" />
+    <Compile Include="nearestPt.cs" />
+    <Compile Include="nearLines.cs" />
+    <Compile Include="planktonReMesh.cs" />
+    <Compile Include="pointCloud.cs" />
+    <Compile Include="polyline.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="rhinoFlock_06.cs" />
-    <Compile Include="scale1D.cs" />
-    <Compile Include="surfacePattern.cs" />
-    <Compile Include="tsplines_01.cs" />
-    <Compile Include="visualize_mesh.cs" />
-    <Compile Include="visualize_surface.cs" />
-    <Compile Include="visual_permeability.cs" />
-    <Compile Include="wall.cs" />
+    <Compile Include="ptToMesh.cs" />
+    <Compile Include="rail.cs" />
+    <Compile Include="railTree.cs" />
+    <Compile Include="rotate.cs" />
+    <Compile Include="quadMesh.cs" />
+    <Compile Include="symmetriad.cs" />
+    <Compile Include="thin.cs" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
+    <Content Include="TextFile1.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

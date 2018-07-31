@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 /// <summary>
 /// This class will be instantiated on demand by the Script component.
 /// </summary>
-public class Script_Instance : GH_ScriptInstance {
+public class Script_Instance55 : GH_ScriptInstance {
     #region Utility functions
     /// <summary>Print a String to the [Out] Parameter of the Script component.</summary>
     /// <param name="text">String to print.</param>
@@ -64,35 +64,93 @@ public class Script_Instance : GH_ScriptInstance {
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Curve rail, Curve profile, List<double> tapers, ref object A) {
+    private void RunScript(double in0,double in1, ref object out0, ref object out1) {
 
 
-        //Brep[] sweeps = Brep.CreateFromSweep(arch, profile, true, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-        //SweepOneRail sweep1;
 
-        double[] ts = rail.DivideByCount(tapers.Count - 1, true);
-        Plane[] planes = new Plane[ts.Length];
-        Curve[] profiles = new Curve[ts.Length];
 
-        for (int i = 0; i < ts.Length; i++) {
-            rail.PerpendicularFrameAt(ts[i], out planes[i]);
-            //rail.FrameAt(ts[i], out planes[i]);
-            Plane world = Plane.WorldZX;
-            world.Rotate(-90 * Math.PI / 180.0, Vector3d.YAxis); //profile in elevation
-            Transform xform = Transform.PlaneToPlane(world, planes[i]);
-            profiles[i] = profile.DuplicateCurve();
-            profiles[i].Scale(tapers[i]);
-            profiles[i].Transform(xform);
+
+        #region beginScript
+        int count = 10;
+        double[] update0 = new double[count*count];
+        double[] update1 = new double[count * count];
+
+        Grasshopper.Kernel.Special.GH_NumberSlider ghSlider0;
+        Grasshopper.Kernel.Special.GH_NumberSlider ghSlider1;
+
+        Guid id0 = this.Component.Params.Input[0].Sources[0].InstanceGuid;
+        Guid id1 = this.Component.Params.Input[1].Sources[0].InstanceGuid;
+
+        ghSlider0 = findSlider(id0);
+        ghSlider1 = findSlider(id1);
+
+
+
+        for (int i = 0; i < count; i++) {
+            for (int j = 0; j < count; j++) {
+                double d = map(i, 0, count - 1, (double)ghSlider0.Slider.Minimum, (double)ghSlider0.Slider.Maximum);
+                update0[(i*count)+j] = d;
+            }
         }
 
-        Brep[] lofts = Brep.CreateFromLoft(profiles, Point3d.Unset, Point3d.Unset, LoftType.Normal, false);
 
 
-        A = lofts;
+        for (int i = 0; i < count; i++) {
+            for (int j = 0; j < count; j++) {
+                double d = map(i, 0, count - 1, (double)ghSlider1.Slider.Minimum, (double)ghSlider1.Slider.Maximum);
+                update1[(j * count) + i] = d;
+            }
+        }
+
+        out0 = update0;
+        out1 = update1;
+
+#endregion
+
+
+
+
 
     }
 
     // <Custom additional code> 
+
+
+
+    #region customCode
+
+
+
+    public double map(double number, double low1, double high1, double low2, double high2) {
+        return low2 + (high2 - low2) * (number - low1) / (high1 - low1);
+    }
+    public Grasshopper.Kernel.Special.GH_NumberSlider findSlider(Guid id) {
+        //Get the document that owns this object.
+        //GH_Document ghDoc = this.OnPingDocument();
+        GH_Document ghDoc = GrasshopperDocument;
+        //Abort if no such document can be found.
+        if (ghDoc == null) { return null; }
+
+        //Iterate over all objects inside the document.
+        for (int i = 0; i < ghDoc.ObjectCount; i++) {
+            IGH_DocumentObject obj = ghDoc.Objects[i];
+
+            //First test the NickName of the object against the search name.
+            if (obj.InstanceGuid == id) {
+                //Then try to cast the object to a GH_NumberSlider.
+                Grasshopper.Kernel.Special.GH_NumberSlider sld_obj = obj as Grasshopper.Kernel.Special.GH_NumberSlider;
+                if (sld_obj != null) { return sld_obj; }
+            } else {
+               // this.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, obj.InstanceGuid.ToString());
+            }
+        }
+        return null;
+    }
+#endregion
+
+
+
+
 
     // </Custom additional code> 
 }

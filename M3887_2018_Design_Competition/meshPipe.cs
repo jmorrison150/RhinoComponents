@@ -64,31 +64,70 @@ public class Script_Instance : GH_ScriptInstance {
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Curve rail, Curve profile, List<double> tapers, ref object A) {
+    private void RunScript(Curve curve, object y, ref object outMesh) {
 
 
-        //Brep[] sweeps = Brep.CreateFromSweep(arch, profile, true, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-        //SweepOneRail sweep1;
+        #region beginScript
+        Interval width = new Interval(-5.0, 5.0);
+        Interval height = new Interval(-5.0, 5.0);
 
-        double[] ts = rail.DivideByCount(tapers.Count - 1, true);
-        Plane[] planes = new Plane[ts.Length];
-        Curve[] profiles = new Curve[ts.Length];
+        NurbsCurve ns = curve.ToNurbsCurve();
 
-        for (int i = 0; i < ts.Length; i++) {
-            rail.PerpendicularFrameAt(ts[i], out planes[i]);
-            //rail.FrameAt(ts[i], out planes[i]);
-            Plane world = Plane.WorldZX;
-            world.Rotate(-90 * Math.PI / 180.0, Vector3d.YAxis); //profile in elevation
-            Transform xform = Transform.PlaneToPlane(world, planes[i]);
-            profiles[i] = profile.DuplicateCurve();
-            profiles[i].Scale(tapers[i]);
-            profiles[i].Transform(xform);
+        Point3dList pts = ns.GrevillePoints();
+        Rectangle3d[] rects = new Rectangle3d[ns.Points.Count];
+        for (int i = 0; i < ns.Points.Count; i++) {
+
+            Plane plane;
+            double t = ns.GrevilleParameter(i);
+            //ns.FrameAt(t, out plane);
+            ns.PerpendicularFrameAt(t, out plane);
+
+            rects[i] = new Rectangle3d(plane,width, height);
+
         }
 
-        Brep[] lofts = Brep.CreateFromLoft(profiles, Point3d.Unset, Point3d.Unset, LoftType.Normal, false);
+        List<Mesh> updateMeshes = new List<Mesh>();
 
 
-        A = lofts;
+        for (int i = 0; i < 4; i++) {
+            List<LineCurve> lcrvs = new List<LineCurve>();
+
+            for (int j = 0; j < 1; j++) {
+
+                LineCurve l0 = new LineCurve(rects[j].Corner(i), rects[j].Corner((i + 1) % 4));
+                lcrvs.Add(l0);
+            }
+
+
+            for (int j = 1; j < rects.Length; j++) {
+                LineCurve side = new LineCurve(rects[j - 1].Corner(i), rects[j].Corner(i));
+                lcrvs.Add(side);
+                LineCurve l0 = new LineCurve(rects[j].Corner(i), rects[j].Corner((i + 1) % 4));
+                lcrvs.Add(l0);
+
+                LineCurve side1 = new LineCurve(rects[j - 1].Corner((i + 1) % 4), rects[j].Corner((i + 1) % 4));
+                lcrvs.Add(side1);
+            }
+            Curve[] lines = lcrvs.ToArray();
+
+            Mesh m = Mesh.CreateFromLines(lines, 4, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
+            updateMeshes.Add(m);
+            // outMesh = lcrvs;
+        }
+
+
+        Mesh meshJoin = new Mesh();
+        for (int i = 0; i < updateMeshes.Count; i++) {
+            meshJoin.Append(updateMeshes[i]);
+        }
+
+        outMesh = meshJoin;
+
+
+        #endregion
+
+
+
 
     }
 

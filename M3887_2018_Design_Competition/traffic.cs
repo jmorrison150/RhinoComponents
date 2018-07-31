@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 /// <summary>
 /// This class will be instantiated on demand by the Script component.
 /// </summary>
-public class Script_Instance : GH_ScriptInstance {
+public class Script_Instance65 : GH_ScriptInstance {
     #region Utility functions
     /// <summary>Print a String to the [Out] Parameter of the Script component.</summary>
     /// <param name="text">String to print.</param>
@@ -64,35 +64,97 @@ public class Script_Instance : GH_ScriptInstance {
     /// Output parameters as ref arguments. You don't have to assign output parameters,
     /// they will have a default value.
     /// </summary>
-    private void RunScript(Curve rail, Curve profile, List<double> tapers, ref object A) {
+    private void RunScript(string csv, double green, object x, ref object outLat, ref object outLng, ref object outColor, ref object A) {
 
 
-        //Brep[] sweeps = Brep.CreateFromSweep(arch, profile, true, RhinoDoc.ActiveDoc.ModelAbsoluteTolerance);
-        //SweepOneRail sweep1;
 
-        double[] ts = rail.DivideByCount(tapers.Count - 1, true);
-        Plane[] planes = new Plane[ts.Length];
-        Curve[] profiles = new Curve[ts.Length];
 
-        for (int i = 0; i < ts.Length; i++) {
-            rail.PerpendicularFrameAt(ts[i], out planes[i]);
-            //rail.FrameAt(ts[i], out planes[i]);
-            Plane world = Plane.WorldZX;
-            world.Rotate(-90 * Math.PI / 180.0, Vector3d.YAxis); //profile in elevation
-            Transform xform = Transform.PlaneToPlane(world, planes[i]);
-            profiles[i] = profile.DuplicateCurve();
-            profiles[i].Scale(tapers[i]);
-            profiles[i].Transform(xform);
+
+
+
+
+
+        #region beginScript
+        string[] stringRow = System.IO.File.ReadAllLines(csv);
+        double[] latitudes = new double[stringRow.Length - 1];
+        double[] longitudes = new double[stringRow.Length - 1];
+        double[] averageDailyTraffic = new double[stringRow.Length - 1];
+        System.Drawing.Color[] colors = new System.Drawing.Color[stringRow.Length - 1];
+        string[] header = stringRow[0].Split(',');
+        for (int i = 0; i < header.Length; i++) {
+          //  Print(header[i]);
         }
 
-        Brep[] lofts = Brep.CreateFromLoft(profiles, Point3d.Unset, Point3d.Unset, LoftType.Normal, false);
+
+        for (int i = 1; i < stringRow.Length - 0; i++) {
+            string[] data = stringRow[i].Split(',');
 
 
-        A = lofts;
+
+            //Print(data[18]);
+            double lat;
+            double.TryParse(data[18], out lat);
+            if (lat != 0) { latitudes[i - 1] = lat; }
+
+
+            double lng;
+            double.TryParse(data[17], out lng);
+            if (lng != 0) {
+                longitudes[i - 1] = lng;
+            }
+
+
+
+            double traffic;
+            double.TryParse(data[2], out traffic);
+            if (traffic != 0) {
+                averageDailyTraffic[i - 1] = traffic;
+            }
+        }
+
+        double maxTraffic = averageDailyTraffic.Max();
+        for (int i = 0; i < averageDailyTraffic.Length; i++) {
+            int colorR = (int)map(averageDailyTraffic[i], 0, maxTraffic, 0, 255);
+            int colorG = (int)map(averageDailyTraffic[i], maxTraffic, 0, 0, green);
+
+
+            colors[i] = System.Drawing.Color.FromArgb(colorR, colorG, 0);
+
+
+
+
+        }
+
+        outLat = latitudes;
+        outLng = longitudes;
+        outColor = colors;
+
+
+        int[] reds = new int[colors.Length];
+        for (int i = 0; i < reds.Length; i++) {
+            reds[i] = colors[i].R;
+        }
+
+
+        #endregion
+
+
+
+
+
+
+
+
+
+
 
     }
 
     // <Custom additional code> 
+
+    public double map(double number, double low1, double high1, double low2, double high2) {
+        return low2 + (high2 - low2) * (number - low1) / (high1 - low1);
+    }
 
     // </Custom additional code> 
 }

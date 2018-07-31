@@ -150,7 +150,7 @@ public class Script_Instance15 : GH_ScriptInstance {
 
 
 
-   °
+   
   }
 
   // <Custom additional code> 
